@@ -11,6 +11,9 @@ RAIZ = Path(__file__).resolve().parents[2]
 FUENTE = Path(os.environ.get("CAJA_NEGRA_FUENTE", RAIZ.parent / "PROYECTO GPS" / "data" / "curated"))
 ASIENTOS_FUENTE = FUENTE / "asiento.parquet"
 CUADERNOS_FUENTE = FUENTE / "cuaderno.parquet"
+# Variables de contrato, plazo, SIAF e historial calculadas con corte temporal por el pipeline previo del equipo.
+INDICADORES_FUENTE = FUENTE.parent / "features" / "features_structured.parquet"
+AVANCE_FUENTE = FUENTE.parent / "features" / "asiento_extraccion.parquet"
 
 TRABAJO = RAIZ / "datos"            # intermedios pesados (no se versionan)
 RESULTADOS = RAIZ / "resultados"    # métricas y tablas (se versionan)

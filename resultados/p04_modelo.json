@@ -23,13 +23,13 @@
   }
  },
  "variables": {
-  "base": [
+  "cuaderno": [
    "asientos_30d",
    "asientos_90d",
    "asientos_total",
    "dias_sin_asientos",
    "prop_supervisor_90d",
-   "alertas_90d",
+   "ritmo_30_vs_90",
    "suspensiones",
    "ampliaciones",
    "adicionales",
@@ -39,9 +39,25 @@
    "ordenes",
    "valorizaciones",
    "cambio_personal",
-   "meses_desde_inicio"
+   "alertas_90d"
   ],
-  "consultas": [
+  "m1": [
+   "asientos_30d",
+   "asientos_90d",
+   "asientos_total",
+   "dias_sin_asientos",
+   "prop_supervisor_90d",
+   "ritmo_30_vs_90",
+   "suspensiones",
+   "ampliaciones",
+   "adicionales",
+   "mayores_metrados",
+   "riesgos",
+   "penalidades",
+   "ordenes",
+   "valorizaciones",
+   "cambio_personal",
+   "alertas_90d",
    "consultas",
    "consultas_90d",
    "consultas_vencidas",
@@ -50,8 +66,131 @@
    "respondidas_tarde",
    "respondidas",
    "mediana_dias_respuesta",
-   "pct_respondidas_tarde"
+   "pct_respondidas_tarde",
+   "meses_seguidos_vencidas"
+  ],
+  "m2": [
+   "asientos_30d",
+   "asientos_90d",
+   "asientos_total",
+   "dias_sin_asientos",
+   "prop_supervisor_90d",
+   "ritmo_30_vs_90",
+   "suspensiones",
+   "ampliaciones",
+   "adicionales",
+   "mayores_metrados",
+   "riesgos",
+   "penalidades",
+   "ordenes",
+   "valorizaciones",
+   "cambio_personal",
+   "alertas_90d",
+   "consultas",
+   "consultas_90d",
+   "consultas_vencidas",
+   "consultas_en_plazo",
+   "max_dias_espera",
+   "respondidas_tarde",
+   "respondidas",
+   "mediana_dias_respuesta",
+   "pct_respondidas_tarde",
+   "meses_seguidos_vencidas",
+   "meses_desde_inicio",
+   "dias_desde_inicio_plazo",
+   "plazo_contractual_dias",
+   "plazo_consumido",
+   "dias_restantes_plazo",
+   "avance_reportado",
+   "brecha_reportada",
+   "plazo_vs_avance",
+   "log_monto_contratado",
+   "log_monto_viable",
+   "es_consorcio",
+   "regimen_ley32069",
+   "nivel_gobierno",
+   "tipo_entidad",
+   "sector",
+   "devengado_sobre_viable",
+   "devengado_3m",
+   "meses_sin_devengado",
+   "problemas_mef_180d",
+   "contratista_obras_previas",
+   "contratista_atrasos_previos",
+   "entidad_obras_previas",
+   "entidad_atrasos_previos",
+   "mes_sen",
+   "mes_cos",
+   "lluvias_en_horizonte",
+   "cierre_fiscal"
+  ],
+  "final": [
+   "asientos_30d",
+   "asientos_90d",
+   "asientos_total",
+   "dias_sin_asientos",
+   "prop_supervisor_90d",
+   "ritmo_30_vs_90",
+   "suspensiones",
+   "ampliaciones",
+   "adicionales",
+   "mayores_metrados",
+   "riesgos",
+   "penalidades",
+   "ordenes",
+   "valorizaciones",
+   "cambio_personal",
+   "alertas_90d",
+   "consultas",
+   "consultas_90d",
+   "consultas_vencidas",
+   "consultas_en_plazo",
+   "max_dias_espera",
+   "respondidas_tarde",
+   "respondidas",
+   "mediana_dias_respuesta",
+   "pct_respondidas_tarde",
+   "meses_seguidos_vencidas",
+   "meses_desde_inicio",
+   "dias_desde_inicio_plazo",
+   "plazo_contractual_dias",
+   "plazo_consumido",
+   "dias_restantes_plazo",
+   "avance_reportado",
+   "brecha_reportada",
+   "plazo_vs_avance",
+   "log_monto_contratado",
+   "log_monto_viable",
+   "es_consorcio",
+   "regimen_ley32069",
+   "nivel_gobierno",
+   "tipo_entidad",
+   "sector",
+   "devengado_sobre_viable",
+   "devengado_3m",
+   "meses_sin_devengado",
+   "problemas_mef_180d",
+   "contratista_obras_previas",
+   "contratista_atrasos_previos",
+   "entidad_obras_previas",
+   "entidad_atrasos_previos",
+   "mes_sen",
+   "mes_cos",
+   "lluvias_en_horizonte",
+   "cierre_fiscal"
   ]
+ },
+ "seleccion": {
+  "pr_auc_validacion": {
+   "B3": 0.1041,
+   "M1": 0.1056,
+   "M2": 0.1131
+  },
+  "modelo_final": "M2"
+ },
+ "arboles": {
+  "final": 271,
+  "B3": 397
  },
  "resultados": {
   "arequipa": {
@@ -92,94 +231,109 @@
      ]
     },
     "B2 Regresión logística": {
-     "pr_auc": 0.1805,
-     "roc_auc": 0.7555,
-     "precision_top20": 0.1724,
-     "recall_top20": 0.4902,
-     "lift_top20": 2.4476,
-     "brier": 0.0625,
+     "pr_auc": 0.1633,
+     "roc_auc": 0.7307,
+     "precision_top20": 0.1586,
+     "recall_top20": 0.451,
+     "lift_top20": 2.2518,
+     "brier": 0.0633,
      "pr_auc_ic95": [
-      0.1087,
-      0.2954
+      0.0999,
+      0.2685
      ],
      "roc_auc_ic95": [
-      0.6748,
-      0.8279
+      0.6475,
+      0.8109
      ]
     },
-    "B3 LightGBM sin consultas": {
-     "pr_auc": 0.1462,
-     "roc_auc": 0.7328,
+    "B3 LightGBM solo cuaderno": {
+     "pr_auc": 0.1858,
+     "roc_auc": 0.7157,
      "precision_top20": 0.1379,
      "recall_top20": 0.3922,
      "lift_top20": 1.9581,
      "pr_auc_ic95": [
-      0.0954,
-      0.2419
+      0.1042,
+      0.3156
      ],
      "roc_auc_ic95": [
-      0.6529,
-      0.8059
+      0.63,
+      0.794
      ]
     },
-    "M Caja Negra (LightGBM + consultas)": {
-     "pr_auc": 0.1875,
-     "roc_auc": 0.7588,
-     "precision_top20": 0.1793,
-     "recall_top20": 0.5098,
-     "lift_top20": 2.5455,
-     "brier": 0.0625,
+    "M1 LightGBM cuaderno + consultas": {
+     "pr_auc": 0.2046,
+     "roc_auc": 0.7541,
+     "precision_top20": 0.1724,
+     "recall_top20": 0.4902,
+     "lift_top20": 2.4476,
      "pr_auc_ic95": [
-      0.1203,
-      0.3332
+      0.1277,
+      0.3773
      ],
      "roc_auc_ic95": [
-      0.6772,
-      0.8308
+      0.6693,
+      0.831
+     ]
+    },
+    "M Caja Negra": {
+     "pr_auc": 0.1567,
+     "roc_auc": 0.7674,
+     "precision_top20": 0.1655,
+     "recall_top20": 0.4706,
+     "lift_top20": 2.3497,
+     "brier": 0.0645,
+     "pr_auc_ic95": [
+      0.1015,
+      0.2518
+     ],
+     "roc_auc_ic95": [
+      0.695,
+      0.8346
      ]
     }
    },
-   "comparacion_pareada_M_vs": {
+   "comparacion_pareada": {
     "B0 Tasa base": {
-     "diferencia_pr_auc": 0.1365,
+     "diferencia_pr_auc": 0.0978,
      "ic95": [
-      0.0601,
-      0.2634
+      0.0451,
+      0.1726
      ],
      "p_unilateral": 0.0
     },
     "B1 Regla: consultas vencidas": {
-     "diferencia_pr_auc": 0.0795,
+     "diferencia_pr_auc": 0.0408,
      "ic95": [
-      -0.0535,
-      0.2294
+      -0.0633,
+      0.1362
      ],
-     "p_unilateral": 0.112
+     "p_unilateral": 0.2
     },
     "B2 Regresión logística": {
-     "diferencia_pr_auc": 0.017,
+     "diferencia_pr_auc": -0.0043,
      "ic95": [
-      -0.0618,
-      0.1257
+      -0.0677,
+      0.0493
      ],
-     "p_unilateral": 0.359
+     "p_unilateral": 0.523
     },
-    "B3 LightGBM sin consultas": {
-     "diferencia_pr_auc": 0.0489,
+    "B3 LightGBM solo cuaderno": {
+     "diferencia_pr_auc": -0.0296,
      "ic95": [
-      0.0047,
-      0.1278
+      -0.1226,
+      0.0539
      ],
-     "p_unilateral": 0.014
+     "p_unilateral": 0.728
+    },
+    "M1 LightGBM cuaderno + consultas": {
+     "diferencia_pr_auc": -0.0595,
+     "ic95": [
+      -0.1701,
+      0.0094
+     ],
+     "p_unilateral": 0.952
     }
-   },
-   "aporte_consultas_pr_auc": {
-    "diferencia": 0.0489,
-    "ic95": [
-     0.0047,
-     0.1278
-    ],
-    "p_unilateral": 0.014
    }
   },
   "nacional": {
@@ -220,260 +374,430 @@
      ]
     },
     "B2 Regresión logística": {
-     "pr_auc": 0.1237,
-     "roc_auc": 0.7515,
-     "precision_top20": 0.1067,
-     "recall_top20": 0.5109,
-     "lift_top20": 2.5542,
+     "pr_auc": 0.1186,
+     "roc_auc": 0.7628,
+     "precision_top20": 0.1098,
+     "recall_top20": 0.5259,
+     "lift_top20": 2.6291,
      "brier": 0.0385,
      "pr_auc_ic95": [
-      0.1035,
-      0.1515
+      0.1005,
+      0.145
      ],
      "roc_auc_ic95": [
-      0.7312,
-      0.7716
+      0.743,
+      0.7814
      ]
     },
-    "B3 LightGBM sin consultas": {
-     "pr_auc": 0.1299,
-     "roc_auc": 0.7577,
-     "precision_top20": 0.1069,
-     "recall_top20": 0.5123,
-     "lift_top20": 2.561,
+    "B3 LightGBM solo cuaderno": {
+     "pr_auc": 0.1287,
+     "roc_auc": 0.7599,
+     "precision_top20": 0.1049,
+     "recall_top20": 0.5027,
+     "lift_top20": 2.5133,
      "pr_auc_ic95": [
-      0.1104,
-      0.1548
+      0.1094,
+      0.1533
      ],
      "roc_auc_ic95": [
-      0.7385,
-      0.7765
+      0.7412,
+      0.7774
      ]
     },
-    "M Caja Negra (LightGBM + consultas)": {
-     "pr_auc": 0.1328,
-     "roc_auc": 0.7638,
-     "precision_top20": 0.1086,
-     "recall_top20": 0.5204,
-     "lift_top20": 2.6019,
-     "brier": 0.0382,
+    "M1 LightGBM cuaderno + consultas": {
+     "pr_auc": 0.1373,
+     "roc_auc": 0.7697,
+     "precision_top20": 0.1098,
+     "recall_top20": 0.5259,
+     "lift_top20": 2.6291,
      "pr_auc_ic95": [
-      0.1141,
-      0.1564
+      0.1177,
+      0.1621
      ],
      "roc_auc_ic95": [
-      0.7448,
-      0.7831
+      0.7505,
+      0.7884
+     ]
+    },
+    "M Caja Negra": {
+     "pr_auc": 0.1471,
+     "roc_auc": 0.7861,
+     "precision_top20": 0.1186,
+     "recall_top20": 0.5681,
+     "lift_top20": 2.8403,
+     "brier": 0.0378,
+     "pr_auc_ic95": [
+      0.1246,
+      0.1746
+     ],
+     "roc_auc_ic95": [
+      0.7684,
+      0.805
      ]
     }
    },
-   "comparacion_pareada_M_vs": {
+   "comparacion_pareada": {
     "B0 Tasa base": {
-     "diferencia_pr_auc": 0.0925,
+     "diferencia_pr_auc": 0.1069,
      "ic95": [
-      0.0735,
-      0.1145
+      0.0851,
+      0.1318
      ],
      "p_unilateral": 0.0
     },
     "B1 Regla: consultas vencidas": {
-     "diferencia_pr_auc": 0.0746,
+     "diferencia_pr_auc": 0.089,
      "ic95": [
-      0.0536,
-      0.0965
+      0.0648,
+      0.1141
      ],
      "p_unilateral": 0.0
     },
     "B2 Regresión logística": {
-     "diferencia_pr_auc": 0.009,
+     "diferencia_pr_auc": 0.028,
      "ic95": [
-      -0.007,
-      0.0242
+      0.0132,
+      0.045
      ],
-     "p_unilateral": 0.137
+     "p_unilateral": 0.001
     },
-    "B3 LightGBM sin consultas": {
-     "diferencia_pr_auc": 0.003,
+    "B3 LightGBM solo cuaderno": {
+     "diferencia_pr_auc": 0.019,
      "ic95": [
-      -0.006,
-      0.0121
+      0.0019,
+      0.0374
      ],
-     "p_unilateral": 0.247
+     "p_unilateral": 0.015
+    },
+    "M1 LightGBM cuaderno + consultas": {
+     "diferencia_pr_auc": 0.0101,
+     "ic95": [
+      -0.005,
+      0.0264
+     ],
+     "p_unilateral": 0.098
     }
-   },
-   "aporte_consultas_pr_auc": {
-    "diferencia": 0.003,
-    "ic95": [
-     -0.006,
-     0.0121
-    ],
-    "p_unilateral": 0.247
    }
   }
  },
+ "ablacion": {
+  "pr_auc_modelo_8_grupos": {
+   "validacion": 0.1131,
+   "arequipa": 0.1567,
+   "nacional": 0.1471
+  },
+  "por_grupo": {
+   "actividad": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.1058,
+     "caida": 0.0073
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.1375,
+     "caida": 0.0192
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1444,
+     "caida": 0.0027
+    }
+   },
+   "senales": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.1021,
+     "caida": 0.011
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.163,
+     "caida": -0.0063
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1111,
+     "caida": 0.0359
+    }
+   },
+   "consultas": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.1102,
+     "caida": 0.0029
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.1515,
+     "caida": 0.0052
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1469,
+     "caida": 0.0002
+    }
+   },
+   "plazo": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.1109,
+     "caida": 0.0022
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.1715,
+     "caida": -0.0148
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1386,
+     "caida": 0.0084
+    }
+   },
+   "contrato": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.1081,
+     "caida": 0.0051
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.17,
+     "caida": -0.0133
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1484,
+     "caida": -0.0014
+    }
+   },
+   "financiera": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.1103,
+     "caida": 0.0028
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.1657,
+     "caida": -0.009
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1527,
+     "caida": -0.0057
+    }
+   },
+   "historial": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.11,
+     "caida": 0.0031
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.1667,
+     "caida": -0.01
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1498,
+     "caida": -0.0027
+    }
+   },
+   "calendario": {
+    "validacion": {
+     "pr_auc_sin_grupo": 0.1113,
+     "caida": 0.0018
+    },
+    "arequipa": {
+     "pr_auc_sin_grupo": 0.167,
+     "caida": -0.0103
+    },
+    "nacional": {
+     "pr_auc_sin_grupo": 0.1526,
+     "caida": -0.0055
+    }
+   }
+  }
+ },
+ "importancia": {
+  "ritmo_30_vs_90": 6.23,
+  "log_monto_viable": 5.99,
+  "dias_sin_asientos": 5.5,
+  "dias_restantes_plazo": 5.19,
+  "prop_supervisor_90d": 4.71,
+  "devengado_sobre_viable": 4.5,
+  "dias_desde_inicio_plazo": 4.06,
+  "asientos_30d": 3.88,
+  "consultas_90d": 3.75,
+  "devengado_3m": 3.73,
+  "tipo_entidad": 3.73,
+  "log_monto_contratado": 3.25,
+  "penalidades": 3.09,
+  "ordenes": 3.01,
+  "entidad_obras_previas": 2.53,
+  "entidad_atrasos_previos": 2.38,
+  "ampliaciones": 2.32,
+  "plazo_contractual_dias": 2.32,
+  "sector": 2.26,
+  "plazo_consumido": 2.05,
+  "mediana_dias_respuesta": 1.78,
+  "nivel_gobierno": 1.74,
+  "meses_desde_inicio": 1.62,
+  "asientos_total": 1.48,
+  "cambio_personal": 1.35,
+  "contratista_obras_previas": 1.34,
+  "asientos_90d": 1.28,
+  "consultas": 1.12,
+  "mes_cos": 1.1,
+  "consultas_en_plazo": 1.09,
+  "max_dias_espera": 0.94,
+  "meses_sin_devengado": 0.89,
+  "avance_reportado": 0.85,
+  "riesgos": 0.81,
+  "respondidas": 0.75,
+  "valorizaciones": 0.71,
+  "cierre_fiscal": 0.7,
+  "problemas_mef_180d": 0.66,
+  "consultas_vencidas": 0.66,
+  "adicionales": 0.63,
+  "alertas_90d": 0.59,
+  "mes_sen": 0.56,
+  "es_consorcio": 0.49,
+  "mayores_metrados": 0.46,
+  "contratista_atrasos_previos": 0.36,
+  "plazo_vs_avance": 0.35,
+  "suspensiones": 0.31,
+  "pct_respondidas_tarde": 0.25,
+  "regimen_ley32069": 0.23,
+  "brecha_reportada": 0.17,
+  "meses_seguidos_vencidas": 0.11,
+  "respondidas_tarde": 0.09,
+  "lluvias_en_horizonte": 0.04
+ },
+ "importancia_grupo": {
+  "actividad": 23.1,
+  "contrato": 17.7,
+  "plazo": 16.6,
+  "senales": 13.3,
+  "consultas": 10.5,
+  "financiera": 9.8,
+  "historial": 6.6,
+  "calendario": 2.4
+ },
  "niveles": {
-  "umbral_alto": 0.0627,
-  "umbral_medio": 0.0373,
+  "umbral_alto": 0.0655,
+  "umbral_medio": 0.0327,
   "arequipa": [
    {
     "nivel": "ALTO",
-    "filas": 191,
-    "eventos": 27,
-    "tasa_observada": 0.1414,
-    "prob_media": 0.1055
+    "filas": 160,
+    "eventos": 26,
+    "tasa_observada": 0.1625,
+    "prob_media": 0.1296
    },
    {
     "nivel": "BAJO",
-    "filas": 357,
-    "eventos": 5,
-    "tasa_observada": 0.014,
-    "prob_media": 0.0167
+    "filas": 371,
+    "eventos": 7,
+    "tasa_observada": 0.0189,
+    "prob_media": 0.0131
    },
    {
     "nivel": "MEDIO",
-    "filas": 176,
-    "eventos": 19,
-    "tasa_observada": 0.108,
-    "prob_media": 0.0478
+    "filas": 193,
+    "eventos": 18,
+    "tasa_observada": 0.0933,
+    "prob_media": 0.047
    }
   ],
   "nacional": [
    {
     "nivel": "ALTO",
-    "filas": 3065,
-    "eventos": 357,
-    "tasa_observada": 0.1165,
-    "prob_media": 0.1026
+    "filas": 2959,
+    "eventos": 370,
+    "tasa_observada": 0.125,
+    "prob_media": 0.1159
    },
    {
     "nivel": "BAJO",
-    "filas": 10585,
-    "eventos": 179,
-    "tasa_observada": 0.0169,
-    "prob_media": 0.0169
+    "filas": 10526,
+    "eventos": 145,
+    "tasa_observada": 0.0138,
+    "prob_media": 0.0135
    },
    {
     "nivel": "MEDIO",
-    "filas": 3928,
-    "eventos": 198,
-    "tasa_observada": 0.0504,
-    "prob_media": 0.0472
+    "filas": 4093,
+    "eventos": 219,
+    "tasa_observada": 0.0535,
+    "prob_media": 0.0462
    }
   ]
  },
  "calibracion_nacional": [
   {
    "decil": 0,
-   "prob_media": 0.0036,
+   "prob_media": 0.0031,
    "tasa_observada": 0.0028,
    "filas": 1758
   },
   {
    "decil": 1,
-   "prob_media": 0.0056,
-   "tasa_observada": 0.004,
+   "prob_media": 0.0041,
+   "tasa_observada": 0.0034,
    "filas": 1758
   },
   {
    "decil": 2,
-   "prob_media": 0.0114,
-   "tasa_observada": 0.0085,
+   "prob_media": 0.009,
+   "tasa_observada": 0.0063,
    "filas": 1758
   },
   {
    "decil": 3,
-   "prob_media": 0.019,
-   "tasa_observada": 0.0194,
+   "prob_media": 0.0148,
+   "tasa_observada": 0.0148,
    "filas": 1757
   },
   {
    "decil": 4,
-   "prob_media": 0.0268,
-   "tasa_observada": 0.0296,
+   "prob_media": 0.0214,
+   "tasa_observada": 0.0245,
    "filas": 1758
   },
   {
    "decil": 5,
-   "prob_media": 0.0344,
-   "tasa_observada": 0.0347,
+   "prob_media": 0.0288,
+   "tasa_observada": 0.0307,
    "filas": 1758
   },
   {
    "decil": 6,
-   "prob_media": 0.0402,
-   "tasa_observada": 0.0398,
+   "prob_media": 0.0376,
+   "tasa_observada": 0.0461,
    "filas": 1757
   },
   {
    "decil": 7,
-   "prob_media": 0.0506,
-   "tasa_observada": 0.0614,
+   "prob_media": 0.0501,
+   "tasa_observada": 0.0518,
    "filas": 1758
   },
   {
    "decil": 8,
-   "prob_media": 0.0687,
-   "tasa_observada": 0.0808,
+   "prob_media": 0.0714,
+   "tasa_observada": 0.0813,
    "filas": 1758
   },
   {
    "decil": 9,
-   "prob_media": 0.1257,
-   "tasa_observada": 0.1365,
+   "prob_media": 0.1434,
+   "tasa_observada": 0.1559,
    "filas": 1758
   }
  ],
  "anticipacion": {
   "arequipa": {
    "obras_con_evento": 34,
-   "alertadas_antes": 20,
-   "pct_alertadas": 58.8,
-   "dias_anticipacion_mediana": 39.0,
+   "alertadas_antes": 22,
+   "pct_alertadas": 64.7,
+   "dias_anticipacion_mediana": 36.5,
    "dias_anticipacion_p25_p75": [
-    17.25,
-    67.5
+    11.25,
+    78.0
    ]
   },
   "nacional": {
    "obras_con_evento": 480,
-   "alertadas_antes": 281,
-   "pct_alertadas": 58.5,
+   "alertadas_antes": 275,
+   "pct_alertadas": 57.3,
    "dias_anticipacion_mediana": 39.0,
    "dias_anticipacion_p25_p75": [
-    12.0,
-    76.0
+    14.0,
+    74.0
    ]
   }
- },
- "importancia": {
-  "dias_sin_asientos": 13.2,
-  "asientos_30d": 11.0,
-  "prop_supervisor_90d": 9.6,
-  "consultas_90d": 6.6,
-  "meses_desde_inicio": 6.0,
-  "asientos_total": 6.0,
-  "ordenes": 5.6,
-  "penalidades": 4.9,
-  "ampliaciones": 4.1,
-  "mediana_dias_respuesta": 4.0,
-  "asientos_90d": 3.7,
-  "cambio_personal": 3.7,
-  "max_dias_espera": 2.5,
-  "alertas_90d": 2.5,
-  "consultas": 2.1,
-  "consultas_en_plazo": 2.1,
-  "adicionales": 2.0,
-  "riesgos": 1.9,
-  "respondidas": 1.9,
-  "valorizaciones": 1.8,
-  "suspensiones": 1.4,
-  "consultas_vencidas": 1.4,
-  "mayores_metrados": 1.2,
-  "pct_respondidas_tarde": 0.6,
-  "respondidas_tarde": 0.4
- },
- "arboles": {
-  "M": 249,
-  "B3": 225
  }
 }
