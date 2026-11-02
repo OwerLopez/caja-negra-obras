@@ -1,11 +1,11 @@
 {
  "obras": 139,
- "peso_obras_json_kb": 74.6,
- "peso_ficha_kb_mediana": 6.4,
- "peso_ficha_kb_max": 121.2,
- "peso_web_total_kb": 1858.5,
- "ms_lista_hasta_mostrar_obras_mediana": 534,
- "ms_abrir_ficha_mediana": 668,
+ "peso_obras_json_kb": 77.2,
+ "peso_ficha_kb_mediana": 9.0,
+ "peso_ficha_kb_max": 124.1,
+ "peso_web_total_kb": 2261.1,
+ "ms_lista_hasta_mostrar_obras_mediana": 678,
+ "ms_abrir_ficha_mediana": 646,
  "errores_consola": 0,
  "errores_texto": [],
  "condiciones": "servidor local, Edge sin caché por pestaña nueva, 5 repeticiones"
