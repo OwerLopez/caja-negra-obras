@@ -137,7 +137,7 @@ export async function render(main) {
 
   <section class="panel">
     <h2>Resultados en la prueba (enero–junio de 2026)</h2>
-    <p class="ayuda">El modelo final (M Caja Negra, 8 grupos) se eligió por PR-AUC en validación: ${Object.entries(mod.seleccion.pr_auc_validacion).map(([k, v]) => `${esc(k)} ${num(v, 3)}`).join(" · ")}.
+    <p class="ayuda">El modelo final (M Caja Negra, 8 grupos) se eligió por PR-AUC en validación: ${Object.entries(mod.seleccion.pr_auc_validacion).map(([k, v]) => `${esc(k === "M2" ? "M Caja Negra" : k)} ${num(v, 3)}`).join(" · ")}.
       La prueba se miró una sola vez. Se comparan reglas y modelos más simples.</p>
     ${conmutador("ambito", [["arequipa", "Arequipa"], ["nacional", "Nacional"]], ambito)}
     <div id="metricas">${tablaMetricas(mod)}</div>
