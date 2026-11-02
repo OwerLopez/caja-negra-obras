@@ -1,0 +1,206 @@
+{
+ "corte": "2026-08-31",
+ "fuente": "OECE · Cuaderno de obra digital (datos abiertos), asientos 2024-06 a 2026-08",
+ "obras": 139,
+ "por_nivel": {
+  "BAJO": 59,
+  "ALTO": 41,
+  "MEDIO": 39
+ },
+ "consultas_arequipa": {
+  "consultas_residente": 6472,
+  "veredicto": {
+   "Sin respuesta en el cuaderno": 4025,
+   "A tiempo": 1937,
+   "Tarde": 455,
+   "En plazo": 55
+  },
+  "respondidas_enlazadas": 2392,
+  "pct_respondidas_enlazadas": 37.0,
+  "dias_respuesta": {
+   "mediana": 3.0,
+   "p75": 6.0,
+   "p90": 20.0
+  },
+  "pct_tarde_entre_respondidas": 19.0,
+  "por_ruta": {
+   "Entidad y proyectista": {
+    "A tiempo": 667,
+    "En plazo": 0,
+    "Sin respuesta en el cuaderno": 0,
+    "Tarde": 106
+   },
+   "Supervisor o inspector": {
+    "A tiempo": 1270,
+    "En plazo": 55,
+    "Sin respuesta en el cuaderno": 4025,
+    "Tarde": 349
+   }
+  },
+  "por_metodo_enlace": {
+   "cita_asiento": 1817,
+   "numero_consulta": 356,
+   "ia_semantica": 203,
+   "asiento_anterior": 16
+  },
+  "histograma_dias": [
+   286,
+   772,
+   729,
+   247,
+   67,
+   69,
+   94,
+   128
+  ]
+ },
+ "plazos": {
+  "directo": 5,
+  "con_proyectista": 21
+ },
+ "evaluacion": {
+  "modelo": {
+   "pr_auc": 0.1875,
+   "roc_auc": 0.7588,
+   "precision_top20": 0.1793,
+   "recall_top20": 0.5098,
+   "lift_top20": 2.5455,
+   "brier": 0.0625,
+   "pr_auc_ic95": [
+    0.1203,
+    0.3332
+   ],
+   "roc_auc_ic95": [
+    0.6772,
+    0.8308
+   ]
+  },
+  "regla": {
+   "pr_auc": 0.123,
+   "roc_auc": 0.5945,
+   "precision_top20": 0.069,
+   "recall_top20": 0.1961,
+   "lift_top20": 0.979,
+   "pr_auc_ic95": [
+    0.0599,
+    0.2269
+   ],
+   "roc_auc_ic95": [
+    0.5047,
+    0.678
+   ]
+  },
+  "sin_consultas": {
+   "pr_auc": 0.1462,
+   "roc_auc": 0.7328,
+   "precision_top20": 0.1379,
+   "recall_top20": 0.3922,
+   "lift_top20": 1.9581,
+   "pr_auc_ic95": [
+    0.0954,
+    0.2419
+   ],
+   "roc_auc_ic95": [
+    0.6529,
+    0.8059
+   ]
+  },
+  "logistica": {
+   "pr_auc": 0.1805,
+   "roc_auc": 0.7555,
+   "precision_top20": 0.1724,
+   "recall_top20": 0.4902,
+   "lift_top20": 2.4476,
+   "brier": 0.0625,
+   "pr_auc_ic95": [
+    0.1087,
+    0.2954
+   ],
+   "roc_auc_ic95": [
+    0.6748,
+    0.8279
+   ]
+  },
+  "prevalencia": 0.0704,
+  "aporte_consultas": {
+   "diferencia": 0.0489,
+   "ic95": [
+    0.0047,
+    0.1278
+   ],
+   "p_unilateral": 0.014
+  },
+  "anticipacion": {
+   "obras_con_evento": 34,
+   "alertadas_antes": 20,
+   "pct_alertadas": 58.8,
+   "dias_anticipacion_mediana": 39.0,
+   "dias_anticipacion_p25_p75": [
+    17.25,
+    67.5
+   ]
+  },
+  "niveles": [
+   {
+    "nivel": "ALTO",
+    "filas": 191,
+    "eventos": 27,
+    "tasa_observada": 0.1414,
+    "prob_media": 0.1055
+   },
+   {
+    "nivel": "BAJO",
+    "filas": 357,
+    "eventos": 5,
+    "tasa_observada": 0.014,
+    "prob_media": 0.0167
+   },
+   {
+    "nivel": "MEDIO",
+    "filas": 176,
+    "eventos": 19,
+    "tasa_observada": 0.108,
+    "prob_media": 0.0478
+   }
+  ],
+  "particion": {
+   "entrenamiento": {
+    "filas": 26337,
+    "positivos": 1570,
+    "obras": 6658,
+    "desde": "2024-06-30",
+    "hasta": "2025-09-30"
+   },
+   "validacion": {
+    "filas": 8702,
+    "positivos": 389,
+    "obras": 4092,
+    "desde": "2025-10-31",
+    "hasta": "2025-12-31"
+   },
+   "prueba": {
+    "filas": 17578,
+    "positivos": 734,
+    "obras": 5073,
+    "desde": "2026-01-31",
+    "hasta": "2026-06-30"
+   }
+  }
+ },
+ "emparejador": {
+  "respuestas": 1272,
+  "candidatos_promedio": 21.02,
+  "azar": 0.1214,
+  "regla_mas_reciente": 0.5197,
+  "regla_mas_reciente_no_respondida": 0.5071,
+  "solo_similitud_texto": 0.3601,
+  "modelo_ia": 0.6682,
+  "umbral": 0.85,
+  "cobertura_con_umbral": 0.217,
+  "precision_con_umbral": 0.913,
+  "modelo_ia_ic95": [
+   0.6258,
+   0.7133
+  ]
+ }
+}

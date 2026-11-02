@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Caja Negra de Obra</title>
+  <meta name="description" content="Inspector virtual que lee el cuaderno de obra digital de las obras públicas de Arequipa, detecta quién las está trabando y avisa antes del atraso, con la prueba escrita.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=Literata:opsz,wght@7..72,400;7..72,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231C2A39'/%3E%3Crect x='8' y='9' width='16' height='3' fill='%23fff'/%3E%3Crect x='8' y='15' width='16' height='3' fill='%23fff' opacity='.6'/%3E%3Crect x='8' y='21' width='10' height='3' fill='%23fff' opacity='.35'/%3E%3C/svg%3E">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Ir al contenido</a>
+  <header class="barra">
+    <a class="marca" href="#/">
+      <span class="marca-icono" aria-hidden="true"></span>
+      <span><strong>Caja Negra de Obra</strong><span class="marca-sub">Arequipa</span></span>
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#/" data-ruta="lista">Obras</a>
+      <a href="#/metodo" data-ruta="metodo">Cómo funciona</a>
+    </nav>
+  </header>
+  <main id="contenido" tabindex="-1">
+    <p class="cargando">Cargando el cuaderno de obra…</p>
+  </main>
+  <footer class="pie">
+    <p>Datos abiertos del OECE (cuaderno de obra digital). Prototipo académico de apoyo a la supervisión: no acusa ni sanciona; toda alerta debe verificarse con el expediente de la obra.</p>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
