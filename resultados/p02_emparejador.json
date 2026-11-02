@@ -1,0 +1,75 @@
+{
+ "respuestas_por_categoria": {
+  "arequipa": {
+   "con_cita": 2225,
+   "sin_cita": 1148,
+   "cita_otro_asiento": 582
+  },
+  "nacional": {
+   "con_cita": 41783,
+   "sin_cita": 21069,
+   "cita_otro_asiento": 11189
+  }
+ },
+ "pares_por_metodo": {
+  "nacional": {
+   "cita_asiento": 39600,
+   "numero_consulta": 12924,
+   "ia_semantica": 4298,
+   "asiento_anterior": 176
+  },
+  "arequipa": {
+   "cita_asiento": 2178,
+   "numero_consulta": 679,
+   "ia_semantica": 221,
+   "asiento_anterior": 16
+  }
+ },
+ "conjunto_oro": {
+  "entrenamiento": 18130,
+  "validacion": 4109,
+  "prueba": 1272
+ },
+ "evaluacion": {
+  "validacion": {
+   "respuestas": 4109,
+   "candidatos_promedio": 22.59,
+   "azar": 0.1303,
+   "regla_mas_reciente": 0.5252,
+   "regla_mas_reciente_no_respondida": 0.5016,
+   "solo_similitud_texto": 0.3599,
+   "modelo_ia": 0.6527,
+   "umbral": 0.85,
+   "cobertura_con_umbral": 0.219,
+   "precision_con_umbral": 0.9
+  },
+  "prueba": {
+   "respuestas": 1272,
+   "candidatos_promedio": 21.02,
+   "azar": 0.1214,
+   "regla_mas_reciente": 0.5197,
+   "regla_mas_reciente_no_respondida": 0.5071,
+   "solo_similitud_texto": 0.3601,
+   "modelo_ia": 0.6682,
+   "umbral": 0.85,
+   "cobertura_con_umbral": 0.217,
+   "precision_con_umbral": 0.913,
+   "modelo_ia_ic95": [
+    0.6258,
+    0.7133
+   ]
+  }
+ },
+ "importancia_variables": {
+  "sim": 24267.9,
+  "dias": 355432.0,
+  "rank_rec": 235971.0,
+  "rank_sim": 105724.9,
+  "dif_sim_max": 34428.4,
+  "n_cand": 31104.5,
+  "ya_respondida": 38142.4,
+  "consulta_residente": 34826.6
+ },
+ "modelo_texto": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+ "ventana_dias": 180
+}

@@ -1,0 +1,56 @@
+erDiagram
+  CUADERNO ||--o{ ASIENTO : contiene
+  CUADERNO ||--o{ CONSULTA_AUDITADA : tiene
+  CUADERNO ||--o{ OBRA_MES : "se observa cada mes"
+  ASIENTO ||--o{ PAR_CONSULTA_RESPUESTA : "enlaza"
+  PAR_CONSULTA_RESPUESTA }o--|| CONSULTA_AUDITADA : "primera respuesta"
+  OBRA_MES ||--|| PREDICCION : genera
+  CUADERNO {
+    string cuaderno_id PK
+    string denominacion
+    string entidad
+    string contratista
+    string provincia
+    string distrito
+    date primer_asiento
+    date f_evento "primer atraso legal"
+  }
+  ASIENTO {
+    string cuaderno_id FK
+    int nro_asiento
+    date fecha
+    string rol "residente, supervisor, inspector"
+    string tipo_std "30 tipos oficiales"
+    string titulo
+    string descripcion
+  }
+  PAR_CONSULTA_RESPUESTA {
+    string cuaderno_id FK
+    int nro_c
+    int nro_r
+    string metodo "regla o IA"
+    float confianza
+    bool ruta_proyectista
+  }
+  CONSULTA_AUDITADA {
+    string cuaderno_id FK
+    int nro_c
+    int plazo "5 o 21"
+    int dias_respuesta
+    string veredicto
+    string responsable
+  }
+  OBRA_MES {
+    string cuaderno_id FK
+    date T "fecha de corte"
+    int y "atraso en 60 dias"
+    int consultas_vencidas
+    float mediana_dias_respuesta
+    int asientos_30d
+  }
+  PREDICCION {
+    string cuaderno_id FK
+    date T
+    float probabilidad
+    string nivel "ALTO, MEDIO o BAJO"
+  }

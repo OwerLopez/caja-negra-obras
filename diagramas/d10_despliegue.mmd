@@ -1,0 +1,16 @@
+flowchart TB
+  subgraph PC["Equipo del proyecto (cada mes)"]
+    direction TB
+    d[("Datos abiertos OECE<br/>descargados")] --> py["Pipeline Python 3.12<br/>DuckDB · Sentence-BERT · LightGBM<br/>GPU RTX 4060 Ti (8 GB)"]
+    py --> js["web/data/*.json"]
+  end
+  subgraph GH["GitHub"]
+    direction TB
+    repo["Repositorio caja-negra-obras<br/>(código, métricas, informe)"] --> pages["GitHub Pages<br/>sitio estático con HTTPS"]
+  end
+  js -->|"git push"| repo
+  pages -->|"navegador web o móvil"| u(("Usuarios"))
+  classDef a fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
+  classDef b fill:#f1f3f2,stroke:#4b5a6a,color:#1c2a39
+  class py,repo,pages a
+  class d,js b

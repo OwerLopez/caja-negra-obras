@@ -1,0 +1,17 @@
+flowchart LR
+  r["Nueva respuesta en el cuaderno"] --> q1{"¿Cita el número de asiento<br/>de la consulta?"}
+  q1 -->|Sí| ok1["Enlace por regla<br/>(cita_asiento)"]
+  q1 -->|No| q2{"¿Dice «asiento anterior»<br/>o «consulta N° k»?"}
+  q2 -->|Sí| ok2["Enlace por regla<br/>(asiento_anterior o numero_consulta)"]
+  q2 -->|No| c["IA: reúne las consultas anteriores<br/>del mismo cuaderno (últimos 180 días)"]
+  c --> v["Calcula para cada candidata:<br/>similitud de significado (Sentence-BERT),<br/>días transcurridos, orden y si ya fue respondida"]
+  v --> m["LightGBM puntúa cada par<br/>y elige la candidata con mayor puntaje"]
+  m --> q3{"¿Confianza ≥ 0,85?<br/>(umbral fijado para 90 %<br/>de precisión en validación)"}
+  q3 -->|Sí| ok3["Enlace por IA<br/>(ia_semantica + confianza)"]
+  q3 -->|No| no["Sin enlace: la consulta queda<br/>«sin respuesta en el cuaderno»"]
+  classDef si fill:#e4f2ea,stroke:#2f6f4b,color:#1c2a39
+  classDef ia fill:#e8eefc,stroke:#2b4c9b,color:#1c2a39
+  classDef no fill:#fbf1de,stroke:#9a6410,color:#1c2a39
+  class ok1,ok2,ok3 si
+  class c,v,m ia
+  class no no

@@ -1,0 +1,113 @@
+{
+ "plazos": {
+  "directo": 5,
+  "con_proyectista": 21
+ },
+ "corte": "2026-08-31",
+ "arequipa": {
+  "consultas_residente": 6472,
+  "veredicto": {
+   "Sin respuesta en el cuaderno": 4025,
+   "A tiempo": 1937,
+   "Tarde": 455,
+   "En plazo": 55
+  },
+  "respondidas_enlazadas": 2392,
+  "pct_respondidas_enlazadas": 37.0,
+  "dias_respuesta": {
+   "mediana": 3.0,
+   "p75": 6.0,
+   "p90": 20.0
+  },
+  "pct_tarde_entre_respondidas": 19.0,
+  "por_ruta": {
+   "Entidad y proyectista": {
+    "A tiempo": 667,
+    "En plazo": 0,
+    "Sin respuesta en el cuaderno": 0,
+    "Tarde": 106
+   },
+   "Supervisor o inspector": {
+    "A tiempo": 1270,
+    "En plazo": 55,
+    "Sin respuesta en el cuaderno": 4025,
+    "Tarde": 349
+   }
+  },
+  "por_metodo_enlace": {
+   "cita_asiento": 1817,
+   "numero_consulta": 356,
+   "ia_semantica": 203,
+   "asiento_anterior": 16
+  },
+  "histograma_dias": [
+   286,
+   772,
+   729,
+   247,
+   67,
+   69,
+   94,
+   128
+  ]
+ },
+ "nacional": {
+  "consultas_residente": 108161,
+  "veredicto": {
+   "Sin respuesta en el cuaderno": 63312,
+   "A tiempo": 36515,
+   "Tarde": 7576,
+   "En plazo": 758
+  },
+  "respondidas_enlazadas": 44091,
+  "pct_respondidas_enlazadas": 40.8,
+  "dias_respuesta": {
+   "mediana": 3.0,
+   "p75": 5.0,
+   "p90": 17.0
+  },
+  "pct_tarde_entre_respondidas": 17.2,
+  "por_ruta": {
+   "Entidad y proyectista": {
+    "A tiempo": 12152,
+    "En plazo": 0,
+    "Sin respuesta en el cuaderno": 0,
+    "Tarde": 1106
+   },
+   "Supervisor o inspector": {
+    "A tiempo": 24363,
+    "En plazo": 758,
+    "Sin respuesta en el cuaderno": 63312,
+    "Tarde": 6470
+   }
+  },
+  "por_metodo_enlace": {
+   "cita_asiento": 32933,
+   "numero_consulta": 7156,
+   "ia_semantica": 3832,
+   "asiento_anterior": 170
+  },
+  "histograma_dias": [
+   7908,
+   13291,
+   13208,
+   3575,
+   1330,
+   1404,
+   1272,
+   2103
+  ]
+ },
+ "panel": {
+  "filas": 59653,
+  "obras": 12523,
+  "filas_observables": 52697,
+  "positivos": 2773,
+  "prevalencia": 0.0526,
+  "arequipa": {
+   "filas_observables": 2444,
+   "positivos": 203,
+   "obras": 542
+  }
+ }
+}

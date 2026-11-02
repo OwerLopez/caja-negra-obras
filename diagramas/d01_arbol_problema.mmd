@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph C[Causas]
+    direction LR
+    c1["El residente anota consultas<br/>que el expediente técnico no resolvió"]
+    c2["La respuesta puede tardar:<br/>la ley da 5 días, o 21 si<br/>interviene el proyectista"]
+    c3["Nadie mide esos plazos:<br/>los datos abiertos no unen<br/>cada respuesta con su consulta"]
+    c4["Leer cientos de asientos por obra<br/>no es posible con el<br/>personal disponible"]
+  end
+  P["<b>PROBLEMA</b><br/>Las señales de que una obra se está trabando quedan escritas<br/>en el cuaderno de obra, pero se leen tarde: cuando el atraso ya ocurrió"]
+  subgraph E[Efectos]
+    direction LR
+    e1["Atraso legal: avance real<br/>menor al 80 % de lo programado"]
+    e2["Ampliaciones de plazo<br/>y mayores costos"]
+    e3["Obras paralizadas:<br/>126 en Arequipa (marzo 2026)"]
+    e4["El control llega<br/>cuando ya no hay remedio"]
+  end
+  C --> P --> E
+  classDef prob fill:#1c2a39,color:#fff,stroke:#1c2a39
+  classDef cau fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
+  classDef efe fill:#fbe9e7,stroke:#b42318,color:#1c2a39
+  class P prob
+  class c1,c2,c3,c4 cau
+  class e1,e2,e3,e4 efe

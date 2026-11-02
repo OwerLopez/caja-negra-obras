@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph HOY["Proceso actual"]
+    direction TB
+    h1["Residente anota la consulta<br/>en el cuaderno"] --> h2["La respuesta llega (o no)<br/>sin que nadie mida el plazo"]
+    h2 --> h3["La valorización mensual<br/>muestra menos del 80 %"]
+    h3 --> h4["Recién ahí se detecta<br/>el atraso"]
+    h4 --> h5["Calendario acelerado,<br/>ampliaciones, paralización"]
+  end
+  subgraph CON["Con Caja Negra de Obra"]
+    direction TB
+    s1["Residente anota la consulta<br/>en el cuaderno"] --> s2["Cada mes el sistema lee<br/>todos los asientos (datos abiertos)"]
+    s2 --> s3["Une consulta y respuesta,<br/>mide días contra el plazo legal"]
+    s3 --> s4["Estima el riesgo de atraso<br/>a 60 días y ordena las obras"]
+    s4 --> s5["Supervisor o entidad revisa primero<br/>las obras de riesgo alto,<br/>con la prueba escrita"]
+    s5 --> s6["Destraba la consulta<br/>antes del atraso"]
+  end
+  classDef malo fill:#fbe9e7,stroke:#b42318,color:#1c2a39
+  classDef bueno fill:#e4f2ea,stroke:#2f6f4b,color:#1c2a39
+  classDef neutro fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
+  class h4,h5 malo
+  class s5,s6 bueno
+  class h1,h2,h3,s1,s2,s3,s4 neutro
+  HOY ~~~ CON

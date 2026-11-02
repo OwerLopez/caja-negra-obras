@@ -1,0 +1,13 @@
+flowchart TB
+  a["<b>Paso 1 · Preparar</b><br/>p01_preparar.py"] -->|"asientos.parquet<br/>cuadernos.parquet"| b["<b>Paso 2 · Emparejar</b><br/>p02_emparejar.py"]
+  b -->|"pares.parquet<br/>(consulta, respuesta, método, confianza)"| c["<b>Paso 3 · Plazos y panel</b><br/>p03_plazos_y_panel.py"]
+  c -->|"consultas_auditadas.parquet<br/>panel.parquet (obra-mes)"| d["<b>Paso 4 · Modelo</b><br/>p04_modelo.py"]
+  d -->|"modelo.txt y calibrador"| e["<b>Paso 5 · Exportar</b><br/>p05_exportar.py"]
+  e -->|"web/data/*.json"| f["<b>Prototipo web</b><br/>web/index.html"]
+  b -.->|"p02_emparejador.json"| r[("resultados/<br/>métricas versionadas")]
+  c -.->|"p03_plazos.json"| r
+  d -.->|"p04_modelo.json"| r
+  classDef paso fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
+  classDef res fill:#f1f3f2,stroke:#4b5a6a,color:#1c2a39
+  class a,b,c,d,e,f paso
+  class r res

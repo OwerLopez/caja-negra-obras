@@ -1,0 +1,22 @@
+{
+ "nacional": {
+  "asientos": 2732592,
+  "cuadernos": 16404,
+  "consultas": 132581,
+  "consultas_residente": 108165,
+  "respuestas": 74042,
+  "primera_fecha": "2024-06-01",
+  "ultima_fecha": "2026-08-31",
+  "cuadernos_con_evento": 2047
+ },
+ "arequipa": {
+  "asientos": 104299,
+  "cuadernos": 629,
+  "consultas": 7944,
+  "consultas_residente": 6472,
+  "respuestas": 3955,
+  "primera_fecha": "2024-06-01",
+  "ultima_fecha": "2026-08-31",
+  "cuadernos_con_evento": 135
+ }
+}

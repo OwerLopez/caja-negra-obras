@@ -1,0 +1,9 @@
+flowchart TB
+  f1["<b>Fase 1: Diagnóstico</b><br/>problema y evidencia<br/>(Contraloría, OECE, norma)"] --> f2["<b>Fase 2: Revisión</b><br/>estado del arte<br/>y brecha"]
+  f2 --> f3["<b>Fase 3: Diseño</b><br/>requerimientos,<br/>arquitectura y datos"]
+  f3 --> f4["<b>Fase 4: Construcción</b><br/>emparejador, motor de<br/>plazos, predictor y web"]
+  f4 --> f5["<b>Fase 5: Evaluación</b><br/>prueba temporal en Arequipa,<br/>comparadores y bootstrap"]
+  f5 --> f6["<b>Fase 6: Discusión</b><br/>límites, ética<br/>y trabajo futuro"]
+  f5 -.->|"ajustes solo con validación,<br/>nunca con la prueba"| f4
+  classDef a fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
+  class f1,f2,f3,f4,f5,f6 a

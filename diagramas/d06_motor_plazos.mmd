@@ -1,0 +1,18 @@
+flowchart LR
+  c["Consulta del residente<br/>(fecha de anotación)"] --> q0{"¿La respuesta menciona al proyectista,<br/>la modificación del expediente<br/>o que se elevó a la entidad?"}
+  q0 -->|Sí| p21["Plazo = 21 días calendario<br/>Responsable: entidad y proyectista<br/>(RLCE 193.5–193.8 / RLGCP 190.3)"]
+  q0 -->|No| p5["Plazo = 5 días calendario<br/>Responsable: supervisor o inspector<br/>(RLCE 193.3)"]
+  p21 --> q1{"¿Tiene respuesta enlazada<br/>hasta la fecha de corte?"}
+  p5 --> q1
+  q1 -->|Sí| q2{"¿Días hasta la respuesta<br/>≤ plazo?"}
+  q2 -->|Sí| a["A tiempo"]
+  q2 -->|No| t["Tarde"]
+  q1 -->|No| q3{"¿Días transcurridos<br/>≤ plazo?"}
+  q3 -->|Sí| e["En plazo"]
+  q3 -->|No| s["Sin respuesta<br/>en el cuaderno"]
+  classDef ok fill:#e4f2ea,stroke:#2f6f4b,color:#1c2a39
+  classDef mal fill:#fbe9e7,stroke:#b42318,color:#1c2a39
+  classDef med fill:#fbf1de,stroke:#9a6410,color:#1c2a39
+  class a,e ok
+  class t mal
+  class s med

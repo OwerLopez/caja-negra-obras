@@ -1,0 +1,30 @@
+flowchart TB
+  subgraph F["Capa de fuente"]
+    oece[("OECE<br/>Datos abiertos del<br/>cuaderno de obra digital<br/>(CSV mensual)")]
+  end
+  subgraph I["Capa de ingesta"]
+    p1["Preparar datos<br/>asientos y cuadernos<br/>(DuckDB, Parquet)"]
+  end
+  subgraph N["Capa de inteligencia"]
+    direction LR
+    em["Emparejador<br/>consulta ↔ respuesta<br/>regla + IA (Sentence-BERT<br/>+ LightGBM)"]
+    mp["Motor de plazos<br/>reglas RLCE 193 / RLGCP 190<br/>veredicto y responsable"]
+    pr["Predictor de atraso<br/>a 60 días<br/>LightGBM calibrado"]
+    em --> mp --> pr
+  end
+  subgraph S["Capa de publicación"]
+    js[("Archivos JSON<br/>resumen, lista y<br/>ficha por obra")]
+  end
+  subgraph W["Capa de presentación"]
+    ui["Prototipo estático<br/>HTML + CSS + JS<br/>GitHub Pages"]
+  end
+  u(("Supervisor,<br/>entidad u OCI"))
+  oece --> p1 --> em
+  pr --> js --> ui --> u
+  mp --> js
+  classDef caja fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
+  classDef ia fill:#e8eefc,stroke:#2b4c9b,color:#1c2a39
+  classDef dato fill:#f1f3f2,stroke:#4b5a6a,color:#1c2a39
+  class p1,ui,mp caja
+  class em,pr ia
+  class oece,js dato
