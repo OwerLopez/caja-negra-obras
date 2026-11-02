@@ -1,0 +1,16 @@
+flowchart LR
+  c["Consulta del<br/>residente"] --> q0{"¿Interviene la entidad<br/>y el proyectista?"}
+  q0 -->|Sí| p21["Plazo 21 días<br/>entidad y proyectista"]
+  q0 -->|No| p5["Plazo 5 días<br/>supervisor o inspector"]
+  p21 --> q1{"¿Respuesta en<br/>el cuaderno?"}
+  p5 --> q1
+  q1 -->|"Sí, a tiempo"| a["A tiempo"]
+  q1 -->|"Sí, pasado el plazo"| t["Tarde"]
+  q1 -->|"No, aún en plazo"| e["En plazo"]
+  q1 -->|"No, plazo vencido"| s["Sin respuesta<br/>en el cuaderno"]
+  classDef ok fill:#e4f2ea,stroke:#2f6f4b,color:#1c2a39
+  classDef mal fill:#fbe9e7,stroke:#b42318,color:#1c2a39
+  classDef med fill:#fbf1de,stroke:#9a6410,color:#1c2a39
+  class a,e ok
+  class t mal
+  class s med

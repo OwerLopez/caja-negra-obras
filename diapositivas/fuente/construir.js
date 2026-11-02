@@ -10,7 +10,11 @@ const P1 = leer("resultados/p01_resumen.json"), EMP = leer("resultados/p02_empar
 const PLZ = leer("resultados/p03_plazos.json"), MOD = leer("resultados/p04_modelo.json"), RES = leer("web/data/resumen.json");
 const n = (x, d = 0) => { const [e, f] = Number(x).toFixed(d).split("."); const ent = e.replace(/\B(?=(\d{3})+(?!\d))/g, " "); return f ? `${ent},${f}` : ent; };
 const pc = (x, d = 1) => `${n(100 * x, d)} %`;
-const AQ = MOD.resultados.arequipa, M = AQ.modelos["M Caja Negra (LightGBM + consultas)"];
+const AQ = MOD.resultados.arequipa, NA = MOD.resultados.nacional, M = AQ.modelos["M Caja Negra"], MN = NA.modelos["M Caja Negra"];
+const MJ = leer("web/data/modelo.json"), PAT = leer("resultados/p03c_patrones.json");
+const OBRA1 = leer(`web/data/obra/${leer("web/data/obras.json")[0].id}.json`);
+const IG = MOD.importancia_grupo, AB = MOD.ablacion.por_grupo, GR = MJ.grupos, NVAR = MJ.catalogo.length;
+const PARN = NA.comparacion_pareada;
 const B = (k) => AQ.modelos[k];
 const E = EMP.evaluacion.prueba, QA = PLZ.arequipa, ANT = MOD.anticipacion.arequipa;
 const NIV = Object.fromEntries(MOD.niveles.arequipa.map((x) => [x.nivel, x]));
@@ -90,11 +94,11 @@ s.addNotes("Esta es la idea central. No hablamos de todas las causas del atraso:
 // 3 Evidencia
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Problema" });
 s.addText("La evidencia: el problema existe y se puede medir", { placeholder: "title" });
-dato(s, 0.6, 1.6, 2.9, "126", "obras paralizadas en Arequipa, S/ 8 383 millones (Contraloría, mar-2026)", ALTO, "dato-paralizadas");
+dato(s, 0.6, 1.6, 2.9, "126", "obras paralizadas en Arequipa: S/ 8 383 millones, 3.er departamento por costo", ALTO, "dato-paralizadas");
 dato(s, 3.7, 1.6, 2.9, n(P1.arequipa.asientos), `asientos en ${n(P1.arequipa.cuadernos)} cuadernos de Arequipa: unos ${n(P1.arequipa.asientos / P1.arequipa.cuadernos)} por obra`, SELLO, "dato-asientos");
 dato(s, 6.8, 1.6, 2.9, `${n(QA.pct_respondidas_enlazadas, 0)} %`, `de las ${n(QA.consultas_residente)} consultas del residente tiene respuesta en el cuaderno`, MEDIO, "dato-trazables");
 dato(s, 9.9, 1.6, 2.8, `${n(QA.pct_tarde_entre_respondidas, 0)} %`, "de las respuestas llegó fuera del plazo legal", ALTO, "dato-tarde");
-texto(s, "Fuentes: Contraloría vía prensa (cotejar con el PDF oficial); el resto es cálculo propio sobre los datos abiertos del OECE, junio 2024 a agosto 2026.",
+texto(s, "Fuentes: Contraloría, Informe N.° 001-2026-CG/SESNC (corte 31-03-2026), Tabla 3; causas declaradas: incumplimiento de contrato 27,6 %, falta de liquidez 24,2 %, expediente técnico 9,1 %. El resto es cálculo propio sobre los datos abiertos del OECE, junio 2024 a agosto 2026.",
   { x: 0.6, y: 4.2, w: 12.1, h: 0.5, fontSize: 12, color: GRIS });
 texto(s, "Nadie puede leer cientos de asientos por obra cada mes. Y los datos abiertos no dicen qué respuesta corresponde a qué consulta: por eso hoy nadie sabe cuánto se demoran.",
   { x: 0.6, y: 4.9, w: 12.1, h: 1.2, fontSize: 20, bold: true });
@@ -121,7 +125,7 @@ texto(s, "Desarrollar y evaluar un sistema con IA que lea el cuaderno de obra di
   { x: 0.6, y: 1.5, w: 12.1, h: 1.2, fontSize: 20, bold: true });
 tarjeta(s, 0.6, 3.0, 3.9, 3.6, "H1 · Emparejador", "La IA elige la consulta que se responde mejor que la regla «la más reciente».", SELLO, "h1");
 tarjeta(s, 4.7, 3.0, 3.9, 3.6, "H2 · Predictor", "El sistema ordena las obras por riesgo mejor que el azar y que una regla simple.", ALTO, "h2");
-tarjeta(s, 8.8, 3.0, 3.9, 3.6, "H3 · Valor de las consultas", "Medir las consultas y sus plazos mejora la predicción frente al mismo modelo sin ellas.", BAJO, "h3");
+tarjeta(s, 8.8, 3.0, 3.9, 3.6, "H3 · Más que el cuaderno", "Sumar consultas, plazo y avance, contrato, dinero, historial y calendario mejora la predicción frente al modelo solo con el cuaderno.", BAJO, "h3");
 s.addNotes("Un objetivo general medible y tres hipótesis que se pueden contrastar con datos. Al final mostraremos cuáles se cumplen y cuáles no del todo.");
 
 // 7 La solución
@@ -139,9 +143,9 @@ s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Solución" });
 s.addText("Arquitectura: cinco capas, costo cero", { placeholder: "title" });
 imagen(s, "d03b_arquitectura_horizontal.png", 0.6, 1.4, 12.1, 3.3, "arquitectura");
 texto(s, [
-  { text: "Fuente: ", options: { bold: true } }, { text: "datos abiertos del OECE (CSV mensual).", options: { breakLine: true } },
+  { text: "Fuente: ", options: { bold: true } }, { text: "datos abiertos del OECE (cuaderno), MEF (SIAF, Banco de Inversiones), INFOBRAS y SEACE.", options: { breakLine: true } },
   { text: "Ingesta: ", options: { bold: true } }, { text: "Python, DuckDB y Parquet.", options: { breakLine: true } },
-  { text: "Inteligencia: ", options: { bold: true } }, { text: "emparejador (IA), motor de plazos (reglas legales) y predictor (IA).", options: { breakLine: true } },
+  { text: "Inteligencia: ", options: { bold: true } }, { text: `emparejador (IA), motor de plazos (reglas legales), ${NVAR} indicadores con corte temporal y predictor explicable (IA).`, options: { breakLine: true } },
   { text: "Publicación: ", options: { bold: true } }, { text: "archivos JSON pequeños.", options: { breakLine: true } },
   { text: "Presentación: ", options: { bold: true } }, { text: "sitio web estático en GitHub Pages.", options: { breakLine: true } },
   { text: " ", options: { breakLine: true } },
@@ -160,14 +164,15 @@ s.addTable([cab,
   fila("Consultas del residente", n(P1.arequipa.consultas_residente), n(P1.nacional.consultas_residente), "Tipo oficial del asiento y rol del autor"),
   fila("Respuestas a consultas", n(P1.arequipa.respuestas), n(P1.nacional.respuestas), "97 % de los números citados existen en el cuaderno"),
   fila("Plazos legales", "5 y 21 días", "5 y 21 días", "Texto del RLCE (art. 193) y del RLGCP (art. 190)"),
-], { x: 0.6, y: 1.5, w: 12.1, colW: [3.2, 1.8, 1.8, 5.3], border: { type: "solid", color: "D5DBE1", pt: 1 }, rowH: 0.55, objectName: "tabla-datos" });
-texto(s, "¿Por qué el cuaderno y no INFOBRAS? INFOBRAS es una foto sin historia; el cuaderno es oficial, fechado, diario, obligatorio y abierto.", { x: 0.6, y: 5.3, w: 12.1, h: 1.0, fontSize: 18, bold: true, color: SELLO });
+  fila("Indicadores externos", "Plazo, monto, SIAF", "Plazo, monto, SIAF", "INFOBRAS (datos fijos), SEACE, MEF; solo fechas ≤ corte"),
+], { x: 0.6, y: 1.5, w: 12.1, colW: [3.2, 1.8, 1.8, 5.3], border: { type: "solid", color: "D5DBE1", pt: 1 }, rowH: 0.5, objectName: "tabla-datos" });
+texto(s, "¿Por qué el cuaderno y no INFOBRAS? INFOBRAS es una foto sin historia; el cuaderno es oficial, fechado, diario, obligatorio y abierto.", { x: 0.6, y: 5.5, w: 12.1, h: 1.0, fontSize: 18, bold: true, color: SELLO });
 s.addNotes("Esta diapositiva responde a «¿qué datos usaron y son verificados?». Todo sale de datos abiertos del Estado; cada archivo tiene su huella digital y los scripts están publicados.");
 
 // 10 Emparejador
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Solución" });
 s.addText("Componente IA 1: unir cada respuesta con su consulta", { placeholder: "title" });
-imagen(s, "d05_emparejador.png", 0.6, 1.4, 12.1, 3.6, "flujo-emparejador");
+imagen(s, "s05_emparejador_lamina.png", 0.6, 1.5, 12.1, 3.4, "flujo-emparejador");
 texto(s, [
   { text: "Primero reglas: ", options: { bold: true } }, { text: "si la respuesta cita «asiento N.° 157» o «consulta N.° 14», el enlace es directo.", options: { breakLine: true } },
   { text: "Si no cita nada, IA: ", options: { bold: true } }, { text: "Sentence-BERT compara el significado de los textos y LightGBM elige la consulta más probable, solo si la confianza es alta.", options: {} },
@@ -177,7 +182,7 @@ s.addNotes("La IA no reemplaza a las reglas: entra solo cuando la respuesta no c
 // 11 Motor de plazos
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Solución" });
 s.addText("Componente 2: el motor de plazos aplica la ley", { placeholder: "title" });
-imagen(s, "d06_motor_plazos.png", 0.6, 1.4, 12.1, 3.7, "flujo-plazos");
+imagen(s, "s06_plazos_lamina.png", 0.6, 1.4, 12.1, 3.7, "flujo-plazos");
 texto(s, "5 días calendario si responde el supervisor (RLCE 193.3); 21 si interviene la entidad y el proyectista (4+2+10+5 en el RLCE; 5+1+10+5 en el RLGCP). Si no hay respuesta en el cuaderno, se dice exactamente eso: «sin respuesta en el cuaderno».",
   { x: 0.6, y: 5.3, w: 12.1, h: 1.3, fontSize: 17 });
 s.addNotes("Esta parte no usa IA: son reglas tomadas del reglamento. Es importante porque el plazo no es una opinión nuestra, es la ley. Y somos cuidadosos con el lenguaje: no decimos que no se respondió, decimos que no está en el cuaderno.");
@@ -196,18 +201,77 @@ s.addNotes("Respuesta a «¿cómo saben que no hizo trampa?». El modelo nunca v
 // 13 Métricas
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Evaluación" });
 s.addText("Las métricas y por qué esas", { placeholder: "title" });
-const cab2 = ["Métrica", "Pregunta que responde", "Por qué"].map((t) => ({ text: t, options: { bold: true, color: BLANCO, fill: { color: TINTA }, fontSize: 14 } }));
-const f2 = (a, b, c2) => [a, b, c2].map((t, i) => ({ text: t, options: { fontSize: 14, color: TINTA, bold: i === 0 } }));
+const cab2 = ["Métrica", "Pregunta que responde", "Fórmula", "Por qué"].map((t) => ({ text: t, options: { bold: true, color: BLANCO, fill: { color: TINTA }, fontSize: 14 } }));
+const f2 = (a, b, c2, d) => [a, b, c2, d].map((t, i) => ({ text: t, options: { fontSize: 13, color: TINTA, bold: i === 0, fontFace: i === 2 ? "Cambria Math" : undefined } }));
 s.addTable([cab2,
-  f2("PR-AUC (principal)", "¿Pone primero a las obras que sí se atrasan?", `El atraso es raro (${pc(AQ.prevalencia)}); la exactitud engaña`),
-  f2("Precisión en el 20 % superior", "Si reviso 1 de cada 5 obras, ¿cuántas tenían el problema?", "Es la capacidad real de revisión"),
-  f2("Exhaustividad en el 20 %", "¿Qué parte de los atrasos encuentro?", "Mide cuánto problema se cubre"),
-  f2("Calibración (Brier)", "Si dice 10 %, ¿pasa un 10 %?", "Para poder creer la probabilidad"),
-  f2("Anticipación", "¿Con cuántos días de ventaja avisa?", "Es el propósito de una alerta"),
-  f2("Exactitud del emparejador", "¿Elige la consulta correcta?", "Es su tarea directa"),
-], { x: 0.6, y: 1.5, w: 12.1, colW: [3.1, 4.9, 4.1], border: { type: "solid", color: "D5DBE1", pt: 1 }, rowH: 0.55, objectName: "tabla-metricas" });
-texto(s, `No usamos la exactitud: diciendo siempre «no se atrasa» se acertaría ${pc(1 - AQ.prevalencia)} y no serviría para nada.`, { x: 0.6, y: 5.75, w: 12.1, h: 0.8, fontSize: 18, bold: true, color: ALTO });
-s.addNotes("La pregunta que nos hicieron la vez pasada. Cada métrica responde una pregunta concreta de quien revisa obras. La exactitud la descartamos por una razón simple: con un evento tan raro, un sistema inútil sacaría 93 %.");
+  f2("PR-AUC (principal)", "¿Pone primero a las obras que sí se atrasan?", "AP = Σₙ (Rₙ − Rₙ₋₁) · Pₙ", `El atraso es raro (${pc(AQ.prevalencia)}); la exactitud engaña`),
+  f2("Precisión@20 %", "Si reviso 1 de cada 5 obras, ¿cuántas tenían el problema?", "TP₂₀ / N₂₀", "Es la capacidad real de revisión"),
+  f2("Exhaustividad@20 %", "¿Qué parte de los atrasos encuentro?", "TP₂₀ / TP", "Mide cuánto problema se cubre"),
+  f2("Lift@20 %", "¿Cuántas veces mejor que revisar al azar?", "Precisión@20 / π", "Se explica en una frase"),
+  f2("Brier (calibración)", "Si dice 10 %, ¿pasa un 10 %?", "(1/N) Σ (pᵢ − yᵢ)²", "Para poder creer la probabilidad"),
+  f2("Anticipación", "¿Con cuántos días de ventaja avisa?", "f_atraso − primera alerta ALTA", "Es el propósito de una alerta"),
+  f2("IC 95 % y valor p", "¿Es real la diferencia o es suerte?", "bootstrap por obra, 1 000 veces", "Los meses de una obra no son independientes"),
+], { x: 0.6, y: 1.45, w: 12.1, colW: [2.3, 3.9, 2.9, 3.0], border: { type: "solid", color: "D5DBE1", pt: 1 }, rowH: 0.5, objectName: "tabla-metricas" });
+texto(s, `No usamos la exactitud: diciendo siempre «no se atrasa» se acertaría ${pc(1 - AQ.prevalencia)} y no serviría para nada.`, { x: 0.6, y: 6.0, w: 12.1, h: 0.6, fontSize: 17, bold: true, color: ALTO });
+s.addNotes("La pregunta que nos hicieron la vez pasada. Cada métrica responde una pregunta concreta de quien revisa obras y tiene su fórmula. La exactitud la descartamos: con un evento tan raro, un sistema inútil sacaría 93 %.");
+
+// 13b Indicadores
+s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Evaluación" });
+s.addText(`Qué mide de cada obra: ${NVAR} indicadores en 8 grupos`, { placeholder: "title" });
+const EJ = {
+  actividad: "asientos 30/90 días, días sin anotar, % del supervisor, ritmo", senales: "ampliaciones previas, suspensiones, penalidades, órdenes",
+  consultas: "vencidas, en plazo, respondidas tarde, persistencia", plazo: "plazo consumido vs. avance físico, días restantes",
+  contrato: "monto contratado y viable, consorcio, nivel, sector", financiera: "devengado SIAF / viable, meses sin pago",
+  historial: "atrasos previos de entidad y contratista", calendario: "temporada de lluvias, cierre fiscal, mes",
+};
+const FU = { actividad: "Cuaderno", senales: "Cuaderno", consultas: "Cuaderno + IA", plazo: "INFOBRAS + texto", contrato: "SEACE, MEF", financiera: "MEF SIAF", historial: "Cuadernos previos", calendario: "Fecha" };
+const cab3 = ["Grupo", "Ejemplos", "Fuente", "Peso", "Aporte*"].map((t) => ({ text: t, options: { bold: true, color: BLANCO, fill: { color: TINTA }, fontSize: 13 } }));
+s.addTable([cab3, ...Object.keys(GR).sort((a, b) => IG[b] - IG[a]).map((g) => [GR[g], EJ[g], FU[g], `${n(IG[g], 1)} %`, `${AB[g].validacion.caida > 0 ? "+" : ""}${n(AB[g].validacion.caida, 4)}`]
+  .map((t, i) => ({ text: t, options: { fontSize: 13, color: TINTA, bold: i === 0, align: i >= 3 ? "right" : "left" } })))],
+  { x: 0.6, y: 1.4, w: 12.1, colW: [3.0, 5.0, 1.8, 1.0, 1.3], border: { type: "solid", color: "D5DBE1", pt: 1 }, rowH: 0.52, objectName: "tabla-indicadores" });
+texto(s, "Peso: % de la ganancia de los árboles. *Aporte: cuánto cae la PR-AUC de validación al quitar el grupo (todos ayudan). Regla de oro: cada indicador del mes T usa solo datos con fecha ≤ T.",
+  { x: 0.6, y: 6.25, w: 12.1, h: 0.6, fontSize: 13, color: GRIS });
+s.addNotes("Esta es la respuesta a «qué características usan». Tres grupos salen del cuaderno y cinco de fuentes oficiales: plazo consumido frente a avance físico, días restantes, ampliaciones previas, monto, ejecución financiera, historial de entidad y contratista y calendario. Todos se calculan sin mirar el futuro.");
+
+// 13c Patrones
+s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Evaluación" });
+s.addText("Patrones: qué acompaña al atraso en los datos", { placeholder: "title" });
+const PSEL = ["asientos_30d", "penalidades", "ampliaciones", "alertas_90d", "consultas_vencidas", "pct_respondidas_tarde", "dias_restantes_plazo", "entidad_atrasos_previos"]
+  .map((v) => PAT.patrones.find((x) => x.variable === v));
+const ETQ = { asientos_30d: "Anotaciones último mes", penalidades: "Penalidades anotadas", ampliaciones: "Ampliaciones previas", alertas_90d: "Alertas en 90 días",
+  consultas_vencidas: "Consultas vencidas", pct_respondidas_tarde: "% respondidas tarde", dias_restantes_plazo: "Días de plazo restantes", entidad_atrasos_previos: "Atrasos previos de la entidad" };
+s.addChart(pres.charts.BAR, [
+  { name: "Valor bajo", labels: PSEL.map((x) => ETQ[x.variable]), values: PSEL.map((x) => Math.round(1000 * x.tasa_bajo) / 10) },
+  { name: "Valor alto", labels: PSEL.map((x) => ETQ[x.variable]), values: PSEL.map((x) => Math.round(1000 * x.tasa_alto) / 10) },
+], { x: 0.6, y: 1.4, w: 8.2, h: 5.3, barDir: "bar", barGrouping: "clustered", chartColors: ["9AA7B4", ALTO], valAxisMinVal: 0,
+  dataLabelFormatCode: '0.0" %"', valAxisLabelFormatCode: '0" %"', dataLabelPosition: "outEnd", ...ejes, showLegend: true, legendPos: "b", legendFontSize: 12,
+  catAxisLabelFontSize: 12, dataLabelFontSize: 11, objectName: "grafico-patrones" });
+texto(s, [
+  { text: "Tasa de atraso a 60 días", options: { bold: true, breakLine: true } },
+  { text: `cuando el indicador es bajo (≤ p25) o alto (> p75). Entrenamiento y validación, ${n(PAT.filas)} obras-mes; base ${pc(PAT.tasa_base)}.`, options: { breakLine: true, color: GRIS } },
+  { text: " ", options: { breakLine: true } },
+  { text: `Penalidades: ${n(PSEL[1].razon_alto_bajo, 1)}× más riesgo.`, options: { breakLine: true } },
+  { text: `Consultas vencidas: ${n(PSEL[4].razon_alto_bajo, 1)}×.`, options: { breakLine: true } },
+  { text: `Obra activa: ${n(PSEL[0].razon_alto_bajo, 1)}×.`, options: { breakLine: true } },
+  { text: " ", options: { breakLine: true } },
+  { text: "Son asociaciones, no causas: el modelo combina todo.", options: { color: SELLO, bold: true } },
+], { x: 9.1, y: 1.6, w: 3.6, h: 5.0, fontSize: 15 });
+s.addNotes("Antes de modelar miramos los datos. Con penalidades anotadas, ampliaciones previas o consultas vencidas, la tasa de atraso sube claramente. El atraso legal aparece más en obras con plazo por delante, porque contamos la primera vez que ocurre.");
+
+// 13d Cómo predice
+s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Evaluación" });
+s.addText("Cómo predice: de los indicadores a la probabilidad", { placeholder: "title" });
+imagen(s, "d13_cadena_prediccion.png", 0.6, 1.35, 12.1, 3.5, "cadena-prediccion");
+const caja = (x, t, f, d) => {
+  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 5.0, w: 3.9, h: 1.75, fill: { color: "F3F5F7" }, line: { color: "D5DBE1", width: 1 }, rectRadius: 0.08 });
+  texto(s, t, { x: x + 0.2, y: 5.08, w: 3.5, h: 0.35, fontSize: 14, bold: true, color: SELLO });
+  texto(s, f, { x: x + 0.2, y: 5.45, w: 3.5, h: 0.45, fontSize: 17, fontFace: "Cambria Math" });
+  texto(s, d, { x: x + 0.2, y: 5.95, w: 3.5, h: 0.75, fontSize: 12, color: GRIS });
+};
+caja(0.6, "Puntaje", `F(x) = Σₖ fₖ(x),  K = ${MOD.arboles.final}`, `Suma de árboles LightGBM sobre ${NVAR} indicadores; parada temprana en validación.`);
+caja(4.7, "Probabilidad", "p = 1 / (1 + e^−(A·F + B))", `Platt: A = ${n(MJ.platt.A, 3)}, B = ${n(MJ.platt.B, 3)}. ALTO si p ≥ ${n(100 * MOD.niveles.umbral_alto, 2)} %.`);
+caja(8.8, "Razones", "F(x) = φ₀ + Σⱼ φⱼ", "TreeSHAP reparte el puntaje: φⱼ > 0 sube el riesgo, φⱼ < 0 lo baja.");
+s.addNotes("Así predice. Cada mes, para cada obra, los 53 indicadores entran a 271 árboles; la suma es un puntaje. Platt lo convierte en probabilidad y los umbrales de validación dan el nivel. TreeSHAP descompone el puntaje para explicar cada alerta.");
 
 // 14 Resultado emparejador (gráfico nativo)
 pres.addSection({ title: "Resultados" });
@@ -240,19 +304,19 @@ s.addNotes("Este es el hallazgo de gestión más fuerte. De 6 472 consultas del 
 
 // 16 Resultado predictor
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Resultados" });
-s.addText("Resultado 3: el 20 % marcado concentra la mitad de los atrasos", { placeholder: "title" });
-s.addChart(pres.charts.BAR, [{ name: "Precisión en el 20 % superior", labels: ["Revisión al azar", "Regla: consultas vencidas", "Regresión logística", "LightGBM sin consultas", "Caja Negra"],
-  values: [AQ.prevalencia, B("B1 Regla: consultas vencidas").precision_top20, B("B2 Regresión logística").precision_top20, B("B3 LightGBM sin consultas").precision_top20, M.precision_top20].map((v) => Math.round(1000 * v) / 10) }],
-  { x: 0.6, y: 1.5, w: 7.6, h: 5.0, barDir: "bar", chartColors: ["9AA7B4", "9AA7B4", "9AA7B4", "9AA7B4", ALTO], valAxisMinVal: 0, valAxisMaxVal: 25,
+s.addText("Resultado 3: el 20 % marcado concentra casi la mitad de los atrasos", { placeholder: "title" });
+s.addChart(pres.charts.BAR, [{ name: "Precisión en el 20 % superior", labels: ["Revisión al azar", "Regla: consultas vencidas", "Regresión logística", "LightGBM solo cuaderno", "M1 cuaderno + consultas", "Caja Negra (8 grupos)"],
+  values: [AQ.prevalencia, B("B1 Regla: consultas vencidas").precision_top20, B("B2 Regresión logística").precision_top20, B("B3 LightGBM solo cuaderno").precision_top20, B("M1 LightGBM cuaderno + consultas").precision_top20, M.precision_top20].map((v) => Math.round(1000 * v) / 10) }],
+  { x: 0.6, y: 1.5, w: 7.6, h: 5.0, barDir: "bar", chartColors: ["9AA7B4", "9AA7B4", "9AA7B4", "9AA7B4", "7F9BD6", ALTO], valAxisMinVal: 0, valAxisMaxVal: 25,
     dataLabelFormatCode: '0.0" %"', valAxisLabelFormatCode: '0" %"', dataLabelPosition: "outEnd", showTitle: true, title: "Obras revisadas que sí se atrasaron (Arequipa, ene–jun 2026)",
     titleFontSize: 13, titleColor: GRIS, titleFontFace: "+mn-lt", ...ejes, objectName: "grafico-predictor" });
 dato(s, 8.6, 1.5, 4.1, `${n(M.lift_top20, 1)} veces`, "más eficaz que revisar al azar con el mismo esfuerzo", ALTO, "dato-lift");
-dato(s, 8.6, 4.0, 4.1, pc(M.recall_top20, 0), `de los atrasos están en ese 20 % (PR-AUC ${n(M.pr_auc, 3)})`, SELLO, "dato-recall");
-s.addNotes(`H2 se cumple frente al azar. Frente a la regla simple, la ventaja es clara en el país pero en Arequipa no es concluyente: solo hubo ${AQ.positivos} atrasos en la prueba. Lo decimos tal cual.`);
+dato(s, 8.6, 4.0, 4.1, n(MN.pr_auc, 3), `PR-AUC nacional (base ${pc(NA.prevalencia)}): supera a la regla, la logística y al modelo solo cuaderno (p ≤ ${n(PARN["B3 LightGBM solo cuaderno"].p_unilateral, 3)})`, SELLO, "dato-nacional");
+s.addNotes(`En Arequipa, revisar el 20 % marcado encuentra ${pc(M.precision_top20)} de obras que se atrasan, frente a ${pc(AQ.prevalencia)} al azar. En el país, con ${NA.positivos} atrasos, el modelo de 8 grupos supera con significancia a la regla, a la regresión logística y al modelo solo con el cuaderno. En Arequipa, con ${AQ.positivos} atrasos, la diferencia frente a esos modelos no es concluyente, y M1 incluso sale un poco mejor; elegimos en validación y lo reportamos tal cual.`);
 
 // 17 Niveles y anticipación
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Resultados" });
-s.addText(`Los niveles separan el riesgo y el aviso llega ${n(ANT.dias_anticipacion_mediana)} días antes`, { placeholder: "title" });
+s.addText(`Los niveles separan el riesgo y el aviso llega ${n(ANT.dias_anticipacion_mediana, 0)} días antes`, { placeholder: "title" });
 s.addChart(pres.charts.BAR, [{ name: "Atraso observado", labels: ["Riesgo bajo", "Riesgo medio", "Riesgo alto"],
   values: [NIV.BAJO, NIV.MEDIO, NIV.ALTO].map((x) => Math.round(1000 * x.tasa_observada) / 10) }],
   { x: 0.6, y: 1.5, w: 6.6, h: 5.0, barDir: "col", chartColors: [BAJO, MEDIO, ALTO], valAxisMinVal: 0, valAxisMaxVal: 20,
@@ -260,23 +324,52 @@ s.addChart(pres.charts.BAR, [{ name: "Atraso observado", labels: ["Riesgo bajo",
     titleFontSize: 13, titleColor: GRIS, titleFontFace: "+mn-lt", ...ejes, objectName: "grafico-niveles" });
 dato(s, 7.6, 1.5, 5.1, `${n(ANT.pct_alertadas, 0)} %`, `de las obras que se atrasaron tuvo antes una alerta alta (${ANT.alertadas_antes} de ${ANT.obras_con_evento})`, ALTO, "dato-alertadas");
 dato(s, 7.6, 4.0, 5.1, `${n(ANT.dias_anticipacion_mediana)} días`, "de anticipación (mediana): tiempo para destrabar la consulta", SELLO, "dato-anticipacion");
-s.addNotes("Las obras de nivel alto se atrasaron diez veces más que las de nivel bajo. Y en más de la mitad de los atrasos, el sistema avisó antes, con una mediana de 39 días: tiempo suficiente para exigir una respuesta pendiente.");
+s.addNotes("Las obras de nivel alto se atrasaron diez veces más que las de nivel bajo. Y en casi dos de cada tres atrasos de Arequipa, el sistema avisó antes, con una mediana de 36 días: tiempo suficiente para exigir una respuesta pendiente.");
+
+// 17b Qué pesa
+s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Resultados" });
+s.addText("Qué pesa en la predicción y qué aporta cada grupo", { placeholder: "title" });
+const gOrden = Object.keys(GR).sort((a, b) => IG[a] - IG[b]);
+s.addChart(pres.charts.BAR, [{ name: "Peso", labels: gOrden.map((g) => GR[g]), values: gOrden.map((g) => IG[g]) }],
+  { x: 0.6, y: 1.4, w: 6.4, h: 5.2, barDir: "bar", chartColors: [SELLO], valAxisMinVal: 0, dataLabelFormatCode: '0.0" %"', valAxisLabelFormatCode: '0" %"',
+    dataLabelPosition: "outEnd", showTitle: true, title: "Peso de cada grupo en el modelo (gain)", titleFontSize: 13, titleColor: GRIS, titleFontFace: "+mn-lt", ...ejes, catAxisLabelFontSize: 12, objectName: "grafico-importancia" });
+imagen(s, "g09_ablacion.png", 7.2, 1.4, 5.5, 3.6, "ablacion");
+texto(s, [
+  { text: "Ablación: ", options: { bold: true } },
+  { text: `en validación todos los grupos ayudan; en el país lo que más aporta son las señales formales (+${n(AB.senales.nacional.caida, 3)}) y el plazo frente al avance (+${n(AB.plazo.nacional.caida, 3)}). En Arequipa ayudan la actividad y las consultas; lo demás está dentro del ruido.`, options: {} },
+], { x: 7.2, y: 5.1, w: 5.5, h: 1.6, fontSize: 13 });
+s.addNotes("La izquierda dice cuánto usa el modelo cada grupo; la derecha cuánto se pierde al quitarlo. No es lo mismo: el contrato pesa mucho pero, quitado, casi no cambia el resultado nacional, porque otros grupos cubren su información.");
+
+// 17c Ejemplo resuelto
+s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Resultados" });
+s.addText(`Ejemplo resuelto: por qué esta obra tiene ${pc(OBRA1.riesgo.probabilidad)} de riesgo`, { placeholder: "title" });
+imagen(s, "g10_ejemplo_cascada.png", 0.6, 1.35, 8.2, 5.4, "cascada");
+texto(s, [
+  { text: OBRA1.nombre.slice(0, 120) + (OBRA1.nombre.length > 120 ? "…" : ""), options: { bold: true, breakLine: true, fontSize: 13 } },
+  { text: `${OBRA1.entidad} · ${OBRA1.distrito}`, options: { color: GRIS, breakLine: true, fontSize: 12 } },
+  { text: " ", options: { breakLine: true } },
+  { text: `Base φ₀ = ${n(MJ.base_logit, 2)}; las razones suman y dan F(x). Platt lo convierte en p = ${pc(OBRA1.riesgo.probabilidad)}: nivel ${OBRA1.riesgo.nivel}, ${n(OBRA1.riesgo.veces_tasa_base, 1)} veces la tasa base.`, options: { breakLine: true } },
+  { text: " ", options: { breakLine: true } },
+  { text: `Lo que más empuja: ${OBRA1.riesgo.aportes.slice(0, 3).map((a) => a.frase.toLowerCase()).join("; ")}.`, options: { color: SELLO, bold: true } },
+], { x: 9.0, y: 1.5, w: 3.7, h: 5.2, fontSize: 14 });
+s.addNotes("Este es el mismo cálculo que hace la web, con números reales. Partimos de la base, sumamos lo que aporta cada indicador y aplicamos la fórmula de Platt. Por eso podemos defender cada alerta: no es una caja negra, es una suma que se puede revisar.");
+
 
 // 18 Prototipo
 pres.addSection({ title: "Prototipo y cierre" });
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Prototipo y cierre" });
 s.addText("El prototipo: simple, rápido y con la prueba a la vista", { placeholder: "title" });
-imagen(s, "c01_lista.png", 0.6, 1.4, 6.0, 4.6, "captura-lista");
-imagen(s, "c03_quien_traba.png", 6.9, 1.4, 5.8, 4.6, "captura-ficha");
-texto(s, `${n(RES.obras)} obras en ejecución · ${RES.por_nivel.ALTO} de riesgo alto · la lista carga en ~0,5 s · sin datos personales · owerlopez.github.io/caja-negra-obras`,
+imagen(s, "c01_panorama.png", 0.6, 1.4, 6.0, 4.6, "captura-panorama");
+imagen(s, "c02_ficha.png", 6.9, 1.4, 5.8, 4.6, "captura-ficha");
+texto(s, `${n(RES.obras)} obras en ejecución · ${RES.por_nivel.ALTO} de riesgo alto · Panorama, ficha con razones y evolución, y «Cómo predice» con fórmulas · sin datos personales · owerlopez.github.io/caja-negra-obras`,
   { x: 0.6, y: 6.2, w: 12.1, h: 0.5, fontSize: 15, color: GRIS });
-s.addNotes("Aquí hacemos la demo de dos minutos: abrir la lista, elegir una obra de riesgo alto, ver por qué está en riesgo, abrir una consulta vencida y mostrar el asiento original como prueba.");
+s.addNotes("Demo de dos minutos: abrir el panorama, elegir una obra de riesgo alto, ver sus razones y la evolución del riesgo, abrir una consulta vencida y mostrar el asiento original. Cerrar en «Cómo predice» con el ejemplo resuelto.");
 
 // 19 Límites
 s = pres.addSlide({ masterName: "CONTENIDO", sectionTitle: "Prototipo y cierre" });
 s.addText("Lo que no hace y sus límites (lo decimos nosotros)", { placeholder: "title" });
 tarjeta(s, 0.6, 1.5, 5.9, 5.1, "No hace", "No acusa ni sanciona: da una prioridad de revisión.\n\nNo reemplaza al supervisor ni al control.\n\nNo ve las respuestas enviadas por carta.", GRIS, "no-hace");
-tarjeta(s, 6.8, 1.5, 5.9, 5.1, "Límites", "Predice el atraso legal (menor al 80 %), no la paralización.\n\nSolo obras por contrata con cuaderno digital, desde jun-2024.\n\nPocos casos en Arequipa: algunos intervalos son amplios.\n\nFalta la prueba con usuarios reales (SUS).", MEDIO, "limites");
+tarjeta(s, 6.8, 1.5, 5.9, 5.1, "Límites", "Predice el atraso legal (menor al 80 %), no la paralización.\n\nSolo obras por contrata con cuaderno digital, desde jun-2024.\n\nPocos casos en Arequipa: allí la ventaja sobre modelos simples no es concluyente.\n\nAvance físico y monto con poca cobertura; falta la prueba con usuarios (SUS).", MEDIO, "limites");
 s.addNotes("Mejor decir los límites nosotros antes que el jurado. Ninguno invalida el resultado, pero delimitan lo que se puede afirmar.");
 
 // 20 Conclusiones
@@ -285,9 +378,10 @@ s.addText("Conclusiones", { placeholder: "title" });
 texto(s, [
   { text: `Se puede reconstruir con IA el enlace consulta–respuesta que los datos oficiales no publican: ${pc(E.modelo_ia)} de acierto.`, options: { bullet: { type: "number" }, breakLine: true } },
   { text: `Las respuestas son poco trazables: solo ${n(QA.pct_respondidas_enlazadas, 0)} % aparece en el cuaderno y ${n(QA.pct_tarde_entre_respondidas, 0)} % de las registradas llega tarde.`, options: { bullet: { type: "number" }, breakLine: true } },
-  { text: `Leer el cuaderno permite anticipar el atraso: ${n(M.lift_top20, 1)} veces más eficaz que el azar y ${n(ANT.dias_anticipacion_mediana)} días de aviso.`, options: { bullet: { type: "number" }, breakLine: true } },
+  { text: `Leer el cuaderno y cruzarlo con plazo, dinero e historial anticipa el atraso: PR-AUC nacional ${n(MN.pr_auc, 3)} (base ${pc(NA.prevalencia)}), ${n(M.lift_top20, 1)} veces el azar en Arequipa y ${n(ANT.dias_anticipacion_mediana, 0)} días de aviso.`, options: { bullet: { type: "number" }, breakLine: true } },
+  { text: `Cada alerta es explicable: fórmulas públicas, ${NVAR} indicadores catalogados y el asiento como prueba.`, options: { bullet: { type: "number" }, breakLine: true } },
   { text: "Todo con datos abiertos, costo cero y un prototipo desplegado.", options: { bullet: { type: "number" } } },
-], { x: 0.6, y: 1.6, w: 12.1, h: 4.8, fontSize: 22, color: BLANCO, paraSpaceAfter: 18 });
+], { x: 0.6, y: 1.5, w: 12.1, h: 5.2, fontSize: 20, color: BLANCO, paraSpaceAfter: 14 });
 s.addNotes("Cerramos respondiendo a cada objetivo con un número. La idea a recordar: el Estado ya publica la caja negra de cada obra; nosotros la leemos a tiempo.");
 
 const salida = path.join(RAIZ, "diapositivas", "Caja_Negra_de_Obra.pptx");

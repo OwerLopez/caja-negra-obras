@@ -1,0 +1,13 @@
+flowchart LR
+  r["Respuesta nueva<br/>en el cuaderno"] --> q1{"¿Cita el N.° de<br/>asiento o consulta?"}
+  q1 -->|Sí| ok1["Enlace por regla"]
+  q1 -->|No| ia["IA: Sentence-BERT + LightGBM<br/>puntúan las consultas previas"]
+  ia --> q2{"¿Confianza<br/>≥ 0,85?"}
+  q2 -->|Sí| ok2["Enlace por IA"]
+  q2 -->|No| no["Sin respuesta<br/>en el cuaderno"]
+  classDef si fill:#e4f2ea,stroke:#2f6f4b,color:#1c2a39
+  classDef ia fill:#e8eefc,stroke:#2b4c9b,color:#1c2a39
+  classDef no fill:#fbf1de,stroke:#9a6410,color:#1c2a39
+  class ok1,ok2 si
+  class ia ia
+  class no no
