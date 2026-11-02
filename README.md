@@ -17,28 +17,32 @@ Curso: Gestión de Sistemas y Tecnologías de Información, Escuela Profesional 
 
 | Pregunta | Cómo |
 |---|---|
-| ¿Se va a atrasar? | Probabilidad de atraso legal en 60 días (LightGBM calibrado), nivel y razones en palabras simples |
+| ¿Se va a atrasar? | Probabilidad de atraso legal en 60 días con 53 indicadores en 8 grupos (LightGBM + Platt), su evolución mensual y las razones (TreeSHAP) en palabras simples |
 | ¿Quién la está trabando? | Cada consulta del residente con su veredicto según el plazo legal (5 o 21 días) y el responsable |
-| ¿Qué está pasando? | Actividad del cuaderno por mes y hechos formales (suspensiones, ampliaciones, adicionales, riesgos) |
+| ¿Qué está pasando? | Plazo consumido frente a avance, dinero devengado, historial de los actores, actividad del cuaderno y hechos formales |
+
+La vista «Cómo predice» del prototipo muestra las fórmulas, un ejemplo resuelto, las métricas con su intervalo, la ablación por grupo y el catálogo completo de indicadores.
 
 Toda afirmación muestra el asiento original del cuaderno (texto anonimizado).
 
-## Resultados principales (prueba fuera de tiempo, Arequipa, enero a junio de 2026)
+## Resultados principales (prueba fuera de tiempo, enero a junio de 2026)
 
 Las cifras exactas están en `resultados/*.json`.
 
 - Emparejador consulta–respuesta: 66,8 % de acierto (IC 95 %: 62,6–71,3 %), frente a 52,0 % de la regla «la más reciente».
 - Solo 37,0 % de las 6 472 consultas del residente tiene respuesta trazable en el cuaderno; 19,0 % de las respuestas llegó fuera de plazo.
-- Revisando el 20 % de obras con mayor riesgo, 17,9 % cae en atraso en 60 días (7,0 % al azar); ese 20 % concentra el 51 % de los atrasos.
-- Alerta alta previa en 59 % de las obras que luego se atrasaron, con una mediana de 39 días de anticipación.
+- Predictor, prueba nacional (734 atrasos): PR-AUC 0,147 frente a una tasa base de 4,2 %; supera con significancia a la regla, a la regresión logística y al modelo solo con el cuaderno (bootstrap pareado por obra).
+- Arequipa (51 atrasos): revisando el 20 % de mayor riesgo, 16,6 % cae en atraso en 60 días (7,0 % al azar); frente a modelos más simples la diferencia no es concluyente.
+- Alerta alta previa en 64,7 % de las obras de Arequipa que luego se atrasaron, con una mediana de 36,5 días de anticipación.
+- Contexto oficial: 126 obras paralizadas en Arequipa por S/ 8 383 millones (Contraloría, Informe N.° 001-2026-CG/SESNC, corte 31-03-2026).
 
 ## Estructura
 
 ```
-scripts/      p01 a p06: pipeline reproducible; render_diagramas, capturas y medir_prototipo
-src/          configuración (plazos legales, fechas de corte) y lectura del texto
+scripts/      p01 a p06 (con p03b indicadores y p03c patrones): pipeline reproducible; render_diagramas, capturas y medir_prototipo
+src/          configuración (plazos legales, fechas de corte), catálogo de indicadores y lectura del texto
 resultados/   métricas versionadas y linaje de los datos OECE (URL y SHA-256)
-web/          prototipo estático (HTML, CSS, JS) y sus datos JSON
+web/          prototipo estático (HTML, CSS y módulos JS sin dependencias) y sus datos JSON
 diagramas/    fuentes Mermaid de los diagramas
 informe/      informe Word/PDF, figuras y su generador
 diapositivas/ presentación y su generador
@@ -54,6 +58,8 @@ pip install -r requirements.txt
 python scripts/p01_preparar.py
 python scripts/p02_emparejar.py        # usa GPU si hay (Sentence-BERT)
 python scripts/p03_plazos_y_panel.py
+python scripts/p03b_indicadores.py     # plazo y avance, contrato, SIAF, historial y calendario
+python scripts/p03c_patrones.py
 python scripts/p04_modelo.py
 python scripts/p05_exportar.py
 python scripts/p06_figuras.py
