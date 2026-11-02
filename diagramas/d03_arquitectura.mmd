@@ -1,30 +1,45 @@
 flowchart TB
-  subgraph F["Capa de fuente"]
-    oece[("OECE<br/>Datos abiertos del<br/>cuaderno de obra digital<br/>(CSV mensual)")]
-  end
-  subgraph I["Capa de ingesta"]
-    p1["Preparar datos<br/>asientos y cuadernos<br/>(DuckDB, Parquet)"]
-  end
-  subgraph N["Capa de inteligencia"]
+  subgraph F["1 · Fuentes abiertas"]
     direction LR
-    em["Emparejador<br/>consulta ↔ respuesta<br/>regla + IA (Sentence-BERT<br/>+ LightGBM)"]
-    mp["Motor de plazos<br/>reglas RLCE 193 / RLGCP 190<br/>veredicto y responsable"]
-    pr["Predictor de atraso<br/>a 60 días<br/>LightGBM calibrado"]
-    em --> mp --> pr
+    oece[("OECE<br/>cuaderno de obra digital<br/>asientos y cuadernos")]
+    mef[("MEF<br/>SIAF devengado mensual<br/>Banco de Inversiones")]
+    inf[("INFOBRAS<br/>plazo y fechas<br/>originales del contrato")]
+    seace[("SEACE / CONOSCE<br/>monto contratado")]
   end
-  subgraph S["Capa de publicación"]
-    js[("Archivos JSON<br/>resumen, lista y<br/>ficha por obra")]
+  subgraph I["2 · Ingesta y linaje"]
+    direction TB
+    p1["Preparar<br/>DuckDB → Parquet<br/>huella SHA-256 por archivo"]
   end
-  subgraph W["Capa de presentación"]
-    ui["Prototipo estático<br/>HTML + CSS + JS<br/>GitHub Pages"]
+  subgraph N["3 · Inteligencia"]
+    direction LR
+    em["Emparejador<br/>consulta ↔ respuesta<br/>reglas + Sentence-BERT + LightGBM"]
+    mp["Motor de plazos<br/>RLCE 193 · RLGCP 190<br/>veredicto y responsable"]
+    ind["Panel obra-mes<br/>53 indicadores en 8 grupos<br/>solo datos con fecha ≤ T"]
+    pr["Predictor a 60 días<br/>LightGBM + Platt<br/>TreeSHAP por obra"]
+    em --> mp --> ind --> pr
   end
-  u(("Supervisor,<br/>entidad u OCI"))
-  oece --> p1 --> em
-  pr --> js --> ui --> u
+  subgraph S["4 · Publicación"]
+    direction TB
+    js[("JSON estáticos<br/>resumen · obras · ficha por obra<br/>ficha técnica del modelo")]
+  end
+  subgraph W["5 · Presentación"]
+    direction LR
+    ui["Web estática (GitHub Pages)<br/>Panorama · Ficha · Cómo predice"]
+    u(("Supervisor,<br/>entidad u OCI"))
+    ui --> u
+  end
+  oece --> p1
+  mef --> p1
+  inf --> p1
+  seace --> p1
+  p1 --> em
+  p1 --> ind
+  pr --> js
   mp --> js
+  js --> ui
   classDef caja fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
   classDef ia fill:#e8eefc,stroke:#2b4c9b,color:#1c2a39
   classDef dato fill:#f1f3f2,stroke:#4b5a6a,color:#1c2a39
-  class p1,ui,mp caja
+  class p1,ui,mp,ind caja
   class em,pr ia
-  class oece,js dato
+  class oece,mef,inf,seace,js dato

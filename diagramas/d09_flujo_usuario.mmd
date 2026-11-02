@@ -2,6 +2,7 @@ sequenceDiagram
   actor U as Supervisor, entidad u OCI
   participant L as Lista de obras
   participant F as Ficha de la obra
+  participant M as Cómo predice
   participant D as Datos JSON del corte mensual
   U->>L: Abre el sistema
   L->>D: Lee obras.json
@@ -10,8 +11,10 @@ sequenceDiagram
   U->>F: Elige una obra de riesgo alto
   F->>D: Lee obra/{id}.json
   D-->>F: Riesgo, consultas auditadas e historia
-  F-->>U: ¿Se va a atrasar? probabilidad y razones
+  F-->>U: ¿Se va a atrasar? probabilidad, evolución y razones
   F-->>U: ¿Quién la traba? consultas tarde o sin respuesta
   U->>F: Abre una consulta
   F-->>U: Prueba escrita: asiento de la consulta y de la respuesta
+  U->>M: ¿Por qué confiar? fórmulas, métricas y catálogo
+  M-->>U: Ejemplo resuelto y validación en meses futuros
   U->>U: Decide: pedir la absolución, llamar al supervisor o visitar la obra

@@ -5,6 +5,7 @@ erDiagram
   ASIENTO ||--o{ PAR_CONSULTA_RESPUESTA : "enlaza"
   PAR_CONSULTA_RESPUESTA }o--|| CONSULTA_AUDITADA : "primera respuesta"
   OBRA_MES ||--|| PREDICCION : genera
+  INDICADOR ||--o{ OBRA_MES : "define columnas"
   CUADERNO {
     string cuaderno_id PK
     string denominacion
@@ -45,12 +46,23 @@ erDiagram
     date T "fecha de corte"
     int y "atraso en 60 dias"
     int consultas_vencidas
-    float mediana_dias_respuesta
-    int asientos_30d
+    float plazo_consumido
+    float plazo_vs_avance
+    float devengado_sobre_viable
+    int contratista_atrasos_previos
+    float otros "53 indicadores en total"
+  }
+  INDICADOR {
+    string nombre PK
+    string grupo "8 grupos"
+    string formula
+    string fuente
+    float cobertura
   }
   PREDICCION {
     string cuaderno_id FK
     date T
     float probabilidad
     string nivel "ALTO, MEDIO o BAJO"
+    string razones "top 8 contribuciones SHAP"
   }

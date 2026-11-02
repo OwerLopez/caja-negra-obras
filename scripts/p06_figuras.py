@@ -16,6 +16,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from caja_negra import config as C  # noqa: E402
+from caja_negra.indicadores import GRUPOS  # noqa: E402
 
 FIG = C.RAIZ / "informe" / "figuras"
 TINTA, SUAVE, SELLO, ALTO, MEDIO, BAJO, LINEA = "#1c2a39", "#4b5a6a", "#2b4c9b", "#b42318", "#9a6410", "#2f6f4b", "#cfd6dd"
@@ -111,17 +112,19 @@ guardar(fig, "g04_emparejador")
 # g05 Comparación de modelos (Arequipa): PR-AUC con IC95
 ra = mod["resultados"]["arequipa"]["modelos"]
 claves = list(ra)
-etq = ["Tasa base (azar)", "Regla: consultas vencidas", "Regresión logística", "LightGBM sin consultas", "Caja Negra"]
-fig, ax = plt.subplots(figsize=(8, 3.4))
+etq = ["B0 Tasa base (azar)", "B1 Regla: consultas vencidas", "B2 Regresión logística", "B3 LightGBM solo cuaderno",
+       "M1 LightGBM cuaderno + consultas", "M Caja Negra (8 grupos)"]
+assert len(etq) == len(claves), claves
+fig, ax = plt.subplots(figsize=(8, 3.9))
 for i, k in enumerate(claves):
     m = ra[k]
-    c = SELLO if k.startswith("M") else "#9aa7b4"
+    c = SELLO if k == "M Caja Negra" else "#7f9bd6" if k.startswith("M1") else "#9aa7b4"
     ax.barh(i, m["pr_auc"], color=c, height=0.6)
     ax.errorbar(m["pr_auc"], i, xerr=[[m["pr_auc"] - m["pr_auc_ic95"][0]], [m["pr_auc_ic95"][1] - m["pr_auc"]]], color=TINTA, capsize=3)
     ax.text(m["pr_auc_ic95"][1] + 0.008, i, coma(f"{m['pr_auc']:.3f}"), va="center", color=TINTA)
 ax.set_yticks(range(len(claves)), etq)
 ax.set_xlabel("PR-AUC en la prueba de Arequipa (enero a junio 2026), con intervalo de confianza del 95 %")
-ax.set_xlim(0, 0.4)
+ax.set_xlim(0, 0.45)
 ax.xaxis.set_major_formatter(coma_ejes)
 ax.set_title("Ordenar obras por riesgo: Caja Negra frente a sus comparadores", loc="left", fontsize=12, color=TINTA)
 guardar(fig, "g05_comparacion_modelos")
@@ -155,3 +158,79 @@ ax.xaxis.set_major_formatter(matplotlib.ticker.PercentFormatter(1.0))
 ax.yaxis.set_major_formatter(matplotlib.ticker.PercentFormatter(1.0))
 ax.set_title("Calibración por deciles (prueba nacional)", loc="left", fontsize=12, color=TINTA)
 guardar(fig, "g07_calibracion")
+
+# g08 Importancia por grupo
+ig = sorted(mod["importancia_grupo"].items(), key=lambda x: x[1])
+fig, ax = plt.subplots(figsize=(8, 3.6))
+ax.barh([GRUPOS[g] for g, _ in ig], [v for _, v in ig], color=SELLO, height=0.6)
+for i, (_, v) in enumerate(ig):
+    ax.text(v + 0.3, i, coma(f"{v:.1f} %"), va="center", color=TINTA)
+ax.set_xlabel("% de la ganancia total de los árboles (gain)")
+ax.set_xlim(0, max(v for _, v in ig) * 1.18)
+ax.set_title("Qué grupos de indicadores usa más el modelo", loc="left", fontsize=12, color=TINTA)
+guardar(fig, "g08_importancia_grupos")
+
+# g09 Ablación por grupo
+ab = mod["ablacion"]["por_grupo"]
+orden = [g for g, _ in sorted(mod["importancia_grupo"].items(), key=lambda x: -x[1])]
+fig, ax = plt.subplots(figsize=(8.5, 4))
+ancho = 0.27
+for j, (amb, col, nom) in enumerate((("validacion", "#9aa7b4", "Validación"), ("nacional", SELLO, "Prueba nacional"), ("arequipa", ALTO, "Prueba Arequipa"))):
+    ax.bar(np.arange(len(orden)) + (j - 1) * ancho, [ab[g][amb]["caida"] for g in orden], ancho, color=col, label=nom)
+ax.axhline(0, color=SUAVE, lw=0.8)
+CORTO = {"actividad": "Actividad", "senales": "Señales\nformales", "consultas": "Consultas\ny plazos", "plazo": "Plazo y\navance",
+         "contrato": "Contrato", "financiera": "Ejecución\nfinanciera", "historial": "Historial", "calendario": "Calendario"}
+ax.set_xticks(range(len(orden)), [CORTO[g] for g in orden], fontsize=9)
+ax.set_ylabel("Caída del PR-AUC al quitar el grupo")
+ax.yaxis.set_major_formatter(coma_ejes)
+ax.legend(frameon=False, fontsize=9)
+ax.set_title("Ablación: cuánto se pierde al reentrenar sin cada grupo (positivo = el grupo ayuda)", loc="left", fontsize=11.5, color=TINTA)
+guardar(fig, "g09_ablacion")
+
+# g10 Ejemplo resuelto: de la base a la probabilidad (cascada de contribuciones)
+web = C.RAIZ / "web" / "data"
+mj = json.loads((web / "modelo.json").read_text(encoding="utf-8"))
+top = json.loads((web / "obras.json").read_text(encoding="utf-8"))[0]
+ob = json.loads((web / "obra" / f"{top['id']}.json").read_text(encoding="utf-8"))
+r = ob["riesgo"]
+z = np.log(r["probabilidad"] / (1 - r["probabilidad"]))
+F = (z - mj["platt"]["B"]) / mj["platt"]["A"]
+ap = r["aportes"]
+resto = F - mj["base_logit"] - sum(a["peso"] for a in ap)
+pasos = [("Base común del modelo (φ0)", mj["base_logit"])] + [(a["frase"], a["peso"]) for a in ap] + [(f"Otros {len(mj['catalogo']) - len(ap)} indicadores", resto)]
+fig, ax = plt.subplots(figsize=(9, 5.2))
+acum = 0
+for i, (t, v) in enumerate(pasos):
+    ini = acum if i else 0
+    acum = acum + v if i else v
+    c = TINTA if i == 0 else (ALTO if v > 0 else BAJO)
+    ax.barh(len(pasos) - i, acum - ini, left=ini, color=c, height=0.6)
+    ax.text(min(ini, acum) - 0.05, len(pasos) - i, (t if len(t) < 58 else t[:55] + "…"), ha="right", va="center", fontsize=8.6, color=TINTA)
+    ax.text(max(ini, acum) + 0.05, len(pasos) - i, coma(f"{v:+.2f}"), va="center", fontsize=8.6, color=SUAVE)
+ax.barh(0, F, color=SELLO, height=0.6)
+ax.text(F - 0.05, 0, coma(f"F(x) = {F:.2f}  →  p = σ({mj['platt']['A']:.3f}·F + {mj['platt']['B']:.3f}) = {100 * r['probabilidad']:.1f} %"),
+        ha="right", va="center", fontsize=9, color=TINTA, fontweight="bold")
+ax.axvline(0, color=SUAVE, lw=0.8)
+ax.set_xlim(mj["base_logit"] - 7.5, 1.2)
+ax.set_yticks([])
+ax.spines["left"].set_visible(False)
+ax.set_xlabel("Puntaje del modelo en escala logit")
+ax.set_title("Ejemplo resuelto: cómo se arma el riesgo de la obra con mayor probabilidad", loc="left", fontsize=11.5, color=TINTA)
+guardar(fig, "g10_ejemplo_cascada")
+
+# g11 Los 15 indicadores más importantes
+imp = sorted(mod["importancia"].items(), key=lambda x: -x[1])[:15][::-1]
+from caja_negra.indicadores import CATALOGO  # noqa: E402
+paleta = {"actividad": "#2b4c9b", "senales": "#b42318", "consultas": "#9a6410", "plazo": "#2f6f4b", "contrato": "#6b4c9a",
+          "financiera": "#1f7a8c", "historial": "#7a5c3a", "calendario": "#8a8f98"}
+fig, ax = plt.subplots(figsize=(8, 5))
+ax.barh([k for k, _ in imp], [v for _, v in imp], color=[paleta[CATALOGO[k][0]] for k, _ in imp], height=0.65)
+for i, (_, v) in enumerate(imp):
+    ax.text(v + 0.1, i, coma(f"{v:.1f} %"), va="center", fontsize=9, color=TINTA)
+ax.tick_params(axis="y", labelsize=9)
+from matplotlib.patches import Patch  # noqa: E402
+usados = list(dict.fromkeys(CATALOGO[k][0] for k, _ in imp[::-1]))
+ax.legend(handles=[Patch(color=paleta[g], label=GRUPOS[g]) for g in usados], frameon=False, fontsize=8, loc="lower right")
+ax.set_xlabel("% de la ganancia total (gain)")
+ax.set_title("Los 15 indicadores con más peso en el modelo", loc="left", fontsize=12, color=TINTA)
+guardar(fig, "g11_top_indicadores")

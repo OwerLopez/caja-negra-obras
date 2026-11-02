@@ -1,0 +1,27 @@
+flowchart LR
+  subgraph CU["Cuaderno OECE"]
+    direction TB
+    g1["<b>Actividad</b> · 6<br/>asientos 30/90 días, días sin anotar,<br/>% del supervisor, ritmo"]
+    g2["<b>Señales formales</b> · 10<br/>suspensiones, ampliaciones previas,<br/>adicionales, penalidades, órdenes"]
+    g3["<b>Consultas y plazos</b> · 10<br/>vencidas, en plazo, respondidas tarde,<br/>mediana de días, persistencia"]
+  end
+  subgraph EX["Fuentes externas"]
+    direction TB
+    g4["<b>Plazo y avance físico</b> · 8<br/>plazo consumido, días restantes,<br/>avance reportado, plazo − avance"]
+    g5["<b>Contrato y entidad</b> · 7<br/>monto contratado y viable, consorcio,<br/>nivel de gobierno, sector"]
+    g6["<b>Ejecución financiera</b> · 4<br/>devengado SIAF / viable, 3 meses,<br/>meses sin pago, problemas MEF"]
+    g7["<b>Historial</b> · 4<br/>obras y atrasos previos<br/>de entidad y contratista"]
+    g8["<b>Calendario y clima</b> · 4<br/>estacionalidad, temporada de lluvias,<br/>cierre fiscal"]
+  end
+  T{{"Corte T<br/>(fin de mes)<br/>solo fecha ≤ T"}}
+  P["Fila obra-mes<br/>x = 53 indicadores"]
+  M["LightGBM<br/>F(x) = Σ fₖ(x)"]
+  g1 & g2 & g3 --> T
+  g4 & g5 & g6 & g7 & g8 --> T
+  T --> P --> M
+  classDef cu fill:#e8eefc,stroke:#2b4c9b,color:#1c2a39
+  classDef ex fill:#ffffff,stroke:#4b5a6a,color:#1c2a39
+  classDef k fill:#1c2a39,stroke:#1c2a39,color:#ffffff
+  class g1,g2,g3 cu
+  class g4,g5,g6,g7,g8 ex
+  class T,P,M k

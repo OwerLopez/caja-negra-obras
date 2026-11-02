@@ -20,18 +20,18 @@ PLANTILLA = """<!doctype html><html><head><meta charset="utf-8">
 mermaid.initialize({startOnLoad:false, theme:'base', securityLevel:'loose',
   flowchart:{htmlLabels:true, curve:'basis', nodeSpacing:30, rankSpacing:42, wrappingWidth:320},
   er:{layoutDirection:'TB'},
-  themeVariables:{fontFamily:'Arial, sans-serif', fontSize:'15px', primaryColor:'#ffffff', primaryBorderColor:'#2b4c9b',
+  themeVariables:{fontFamily:'Arial, sans-serif', fontSize:'17px', primaryColor:'#ffffff', primaryBorderColor:'#2b4c9b',
     primaryTextColor:'#1c2a39', lineColor:'#4b5a6a', secondaryColor:'#f1f3f2', tertiaryColor:'#f6f8fa',
     clusterBkg:'#f6f8fa', clusterBorder:'#cfd6dd', actorBkg:'#ffffff', actorBorder:'#2b4c9b', noteBkgColor:'#fbf1de',
     taskBkgColor:'#2b4c9b', activeTaskBkgColor:'#2f6f4b', critBkgColor:'#b42318', doneTaskBkgColor:'#9aa7b4',
     sectionBkgColor:'#f6f8fa', altSectionBkgColor:'#ffffff', gridColor:'#cfd6dd'}});
-mermaid.run().then(()=>{document.body.dataset.listo='1'}).catch(e=>{document.body.dataset.error=String(e)});
+mermaid.run().then(()=>{document.querySelectorAll('#d svg').forEach(s=>{const w=parseFloat(s.style.maxWidth)||s.viewBox.baseVal.width;s.style.maxWidth='none';s.setAttribute('width',w);s.removeAttribute('height');s.style.height='auto';});document.body.dataset.listo='1'}).catch(e=>{document.body.dataset.error=String(e)});
 </script></body></html>"""
 
 nombres = sys.argv[1:] or [p.stem for p in sorted((RAIZ / "diagramas").glob("*.mmd"))]
 with sync_playwright() as p:
     nav = p.chromium.launch(channel="msedge")
-    pag = nav.new_page(device_scale_factor=2, viewport={"width": 1500, "height": 900})
+    pag = nav.new_page(device_scale_factor=2, viewport={"width": 2600, "height": 1200})
     for n in nombres:
         fuente = (RAIZ / "diagramas" / f"{n}.mmd").read_text(encoding="utf-8")
         pag.set_content(PLANTILLA % html.escape(fuente), wait_until="networkidle")

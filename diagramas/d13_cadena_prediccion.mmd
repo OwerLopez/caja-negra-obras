@@ -1,0 +1,18 @@
+flowchart LR
+  x["<b>1 · Indicadores</b><br/>x = (x₁ … x₅₃)<br/>de la obra en T"] --> f["<b>2 · Puntaje</b><br/>F(x) = Σₖ fₖ(x)<br/>271 árboles"]
+  f --> s["<b>3 · Razones</b><br/>F(x) = φ₀ + Σⱼ φⱼ<br/>TreeSHAP"]
+  f --> p["<b>4 · Probabilidad</b><br/>p = σ(A·F + B)<br/>Platt en validación"]
+  p --> n{"<b>5 · Nivel</b>"}
+  n -->|"p ≥ 6,55 %"| a["ALTO<br/>revisar ya"]
+  n -->|"3,27 % ≤ p < 6,55 %"| m["MEDIO<br/>vigilar"]
+  n -->|"p < 3,27 %"| b["BAJO"]
+  s --> e["<b>6 · Evidencia</b><br/>top 8 razones + asientos<br/>de consulta y respuesta"]
+  a --> e
+  classDef paso fill:#ffffff,stroke:#2b4c9b,color:#1c2a39
+  classDef alto fill:#fbe9e7,stroke:#b42318,color:#1c2a39
+  classDef medio fill:#fbf1de,stroke:#9a6410,color:#1c2a39
+  classDef bajo fill:#e4f2ea,stroke:#2f6f4b,color:#1c2a39
+  class x,f,s,p,e paso
+  class a alto
+  class m medio
+  class b bajo
