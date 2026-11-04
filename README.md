@@ -10,6 +10,7 @@ con la prueba escrita.
 - **Prototipo:** https://owerlopez.github.io/caja-negra-obras/
 - **Informe (estructura GESITI):** [informe/Informe_Caja_Negra_de_Obra.docx](informe/Informe_Caja_Negra_de_Obra.docx) · [PDF](informe/Informe_Caja_Negra_de_Obra.pdf)
 - **Diapositivas:** [diapositivas/Caja_Negra_de_Obra.pptx](diapositivas/Caja_Negra_de_Obra.pptx) · [PDF](diapositivas/Caja_Negra_de_Obra.pdf)
+- **Exposición en cinco bloques y guion:** [presentaciones/](presentaciones/)
 
 Curso: Gestión de Sistemas y Tecnologías de Información, Escuela Profesional de Ingeniería de Sistemas, UNSA.
 

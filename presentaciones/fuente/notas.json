@@ -1,0 +1,87 @@
+[
+ {
+  "n": 1,
+  "titulo": "Caja Negra de Obra",
+  "notas": "Presentamos Caja Negra de Obra. Investigamos por qué las obras públicas de Arequipa se atrasan, encontramos una fuente de datos que nadie procesa (el cuaderno de obra digital) y construimos un sistema que la lee para avisar a tiempo qué obras revisar, siempre con la prueba escrita. Completar en la portada los nombres de todos los integrantes."
+ },
+ {
+  "n": 2,
+  "titulo": "Origen: obras paralizadas y un cuaderno que nadie lee a tiempo",
+  "notas": "El origen es oficial. Según la Contraloría, al 31 de marzo de 2026 Arequipa tenía 126 obras paralizadas por 8 383 millones de soles, tercera en el país por costo. Las causas que declaran las entidades son el incumplimiento de contrato, la falta de liquidez, el expediente técnico y las controversias. Desde junio de 2024 cada obra por contrata escribe su día a día en el cuaderno de obra digital, que el OECE publica como datos abiertos. Ahí está la información, pero nadie la procesa."
+ },
+ {
+  "n": 3,
+  "titulo": "Problema: las señales se leen cuando el atraso ya ocurrió",
+  "notas": "Este es nuestro árbol de problemas, el mismo del informe. A la izquierda las causas: consultas que el expediente no resolvió, plazos legales de 5 o 21 días para responder, nadie mide esos plazos porque los datos no unen cada respuesta con su consulta, y no hay personal para leer cientos de asientos. El efecto es que el atraso se detecta tarde. Abajo, lo que medimos nosotros: solo el 37 % de las consultas tiene una respuesta trazable en el cuaderno y el 19 % de las respuestas llegó fuera de plazo. Con esto pasamos a la investigación."
+ },
+ {
+  "n": 4,
+  "titulo": "Investigación: qué existe y qué faltaba",
+  "notas": "Revisamos Google Scholar, arXiv, repositorios peruanos (ALICIA, RENATI, UNSA, PUCP), LACCEI, CIB W78 y fuentes oficiales, de 2018 a 2026. Hay evaluaciones de INFOBRAS, estudios de causas con encuestas o revisión manual, modelos de aprendizaje automático con datos estructurados y experiencias de lectura de bitácoras con IA en otros idiomas. Ninguno lee el cuaderno de obra peruano ni mide si las consultas se responden en plazo. Esa es la brecha que cubrimos."
+ },
+ {
+  "n": 5,
+  "titulo": "Propuesta: un inspector virtual que lee el cuaderno y avisa",
+  "notas": "La propuesta responde tres preguntas que cualquier supervisor entiende: ¿se va a atrasar?, ¿quién la está trabando? y ¿qué está pasando? Para eso construimos cuatro componentes en cadena. El alcance es acotado: obras por contrata de Arequipa con cuaderno digital, y la etiqueta es el atraso legal, no la paralización."
+ },
+ {
+  "n": 6,
+  "titulo": "Factores y variables: 53 indicadores en 8 grupos por obra y mes",
+  "notas": "Seleccionamos factores con cuatro criterios: que la norma o la literatura los asocie a eventos de plazo, que existan en una fuente oficial, que se puedan calcular solo con datos anteriores al mes evaluado y que tengan cobertura suficiente. Tres grupos salen del cuaderno y cinco de fuentes externas. Todos forman una fila por obra y mes, que es la entrada del modelo; la variable que se predice es el atraso legal en los 60 días siguientes. El peso es cuánto los usa el modelo."
+ },
+ {
+  "n": 7,
+  "titulo": "Datos: fuentes oficiales, cobertura y cómo verificamos su calidad",
+  "notas": "Todos los datos son abiertos y oficiales. El cuaderno de obra digital del OECE es la fuente central: 2,7 millones de asientos del país entre junio de 2024 y agosto de 2026. Se complementa con MEF, INFOBRAS y SEACE. La calidad se controla con la huella SHA-256 de cada archivo, el corte temporal y la cobertura de cada indicador. La limitación principal es que algunos datos externos tienen poca cobertura: el avance físico leído del texto solo existe en el 7 % de las obras-mes de Arequipa. Con esto termina el bloque de datos y pasamos a la metodología."
+ },
+ {
+  "n": 8,
+  "titulo": "Metodología: diseño de un artefacto y evaluación fuera de tiempo",
+  "notas": "El enfoque es cuantitativo y aplicado: construimos un artefacto y medimos su desempeño con datos reales. Seguimos las seis fases del informe: diagnóstico, revisión, diseño, construcción, evaluación y discusión. La regla clave está en la flecha de regreso: los ajustes se hacen solo con validación, nunca con la prueba. La evaluación es fuera de tiempo: el modelo aprende con meses pasados y se prueba en meses que nunca vio, como ocurriría en la realidad."
+ },
+ {
+  "n": 9,
+  "titulo": "Procesamiento: pipeline reproducible, un archivo por paso",
+  "notas": "Este es el flujo de datos del informe. Cada script lee los archivos del paso anterior y deja los suyos. Preparar depura asientos y cuadernos; emparejar une consultas y respuestas; plazos y panel aplica la ley y arma la fila obra-mes; indicadores agrega las fuentes externas con corte temporal; modelo entrena y mide; exportar publica para la web. Abajo, los controles de calidad que aplicamos en el camino."
+ },
+ {
+  "n": 10,
+  "titulo": "Medidas del problema y de los datos, antes del modelo",
+  "notas": "Antes del modelo medimos el problema y la calidad de los datos. La cobertura dice qué tan completo está cada indicador. Los días de respuesta y el veredicto aplican la ley. Los porcentajes de respuestas trazables y tardías describen el problema. Y la exactitud del emparejador dice si podemos confiar en el enlace consulta–respuesta: la IA acierta 67 % frente a 52 % de la mejor regla simple, y con umbral de confianza llega a 91 % de precisión."
+ },
+ {
+  "n": 11,
+  "titulo": "Métricas del modelo: fórmula, unidad, interpretación y criterio",
+  "notas": "Estas son las métricas del predictor, todas medidas en meses que el modelo no vio. La principal es la PR-AUC porque el atraso es raro: solo el 7 % de las obras-mes de Arequipa en la prueba. Con un evento tan raro, la exactitud engaña: decir siempre que no habrá atraso acertaría 93 % y no serviría. Las métricas al 20 % responden la pregunta del supervisor: si reviso una de cada cinco obras, cuántas tenían el problema. Brier e intervalos nos dicen si la probabilidad es creíble y si una diferencia es real. Con esto cierro el bloque y paso al modelo."
+ },
+ {
+  "n": 12,
+  "titulo": "Machine Learning: de los indicadores a una probabilidad explicada",
+  "notas": "El predictor es un LightGBM: una suma de 271 árboles de decisión sobre los 53 indicadores, cuyo número fijó la parada temprana en validación. El puntaje se convierte en probabilidad con la calibración de Platt, y los umbrales de validación dan el nivel. TreeSHAP reparte el puntaje entre los indicadores para explicar cada alerta. El emparejador es otro modelo: Sentence-BERT compara el significado de los textos y un LightGBM de pares elige la consulta más probable."
+ },
+ {
+  "n": 13,
+  "titulo": "Evaluación: entrenar en el pasado y medir una sola vez en el futuro",
+  "notas": "La partición es temporal y estricta: entrenamiento hasta septiembre de 2025, validación de octubre a diciembre para detener, calibrar y elegir el modelo, y prueba de enero a junio de 2026. Comparamos con cinco alternativas. En el país, con 734 atrasos, el modelo de 8 grupos supera con significancia a la regla, a la regresión logística y al modelo solo con el cuaderno. En Arequipa, con 51 atrasos, solo la ventaja frente al azar es concluyente y el modelo con cuaderno y consultas sale algo mejor: lo decimos tal cual, porque elegimos en validación y no mirando la prueba."
+ },
+ {
+  "n": 14,
+  "titulo": "Arquitectura: cinco capas conectadas por archivos con contrato",
+  "notas": "La arquitectura integra datos, ML, backend y frontend. El backend no es un servidor: es el pipeline en Python que corre una vez por corte mensual. No hay base de datos en línea: los datos se guardan en Parquet y se consultan con DuckDB durante el procesamiento. La comunicación entre el ML y la web es un contrato: archivos JSON con una versión de esquema y la huella del modelo que los generó. El frontend solo lee esos archivos y muestra el resultado. Con esto termina mi bloque y pasamos al flujo completo y la demostración."
+ },
+ {
+  "n": 15,
+  "titulo": "Flujo integral: del asiento escrito a la decisión del supervisor",
+  "notas": "Este es el recorrido completo, de punta a punta. El OECE publica el cuaderno cada mes. El pipeline lo descarga y lo cruza con las otras fuentes. El emparejador y el motor de plazos auditan las consultas. Los 53 indicadores alimentan el predictor, que da probabilidad, nivel y razones. Todo se publica como archivos con contrato, la web los muestra, y el supervisor decide qué revisar con el asiento en la mano. Ahora lo vemos funcionando."
+ },
+ {
+  "n": 16,
+  "titulo": "Demostración: el sistema real con el corte del 31-08-2026",
+  "notas": "Hacemos el recorrido en el sitio publicado, owerlopez.github.io/caja-negra-obras. Uno: la entrada son los datos abiertos del corte del 31 de agosto. Dos: el pipeline los procesó en 53 indicadores por obra. Tres: el modelo asigna a la obra de mayor riesgo 37,4 % y explica por qué. Cuatro: el panorama ordena las 139 obras y muestra cuántas tienen consultas vencidas. Cinco: en la ficha se abre una consulta vencida y aparece el asiento original como prueba. Si alguien no conoce el tema, el botón Recorrido guiado explica cada parte de la pantalla."
+ },
+ {
+  "n": 17,
+  "titulo": "Conclusiones: qué está implementado, validado y planificado",
+  "notas": "Cerramos separando lo que está hecho de lo que falta. Implementado: el pipeline completo, los cuatro componentes de inteligencia y la web publicada con contrato de datos y pruebas. Validado: el emparejador con 67 % de acierto, el predictor fuera de tiempo con mejora significativa en el país, y la web con 114 pruebas y cero violaciones de accesibilidad. Planificado: la prueba con supervisores reales, pedir al OECE el identificador de asiento y predecir también la ampliación de plazo. Aporte: con datos abiertos y buena ingeniería, la caja negra de cada obra se puede leer a tiempo. Gracias; quedamos atentos a sus preguntas."
+ }
+]
