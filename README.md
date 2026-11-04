@@ -69,6 +69,15 @@ python -m http.server 8765 --directory web
 El informe y las diapositivas se generan con `node informe/fuente/construir.js` y
 `node diapositivas/fuente/construir.js` (paquetes npm `docx` y `pptxgenjs`).
 
+## Calidad
+
+- `python -m pytest`: reglas de texto y anonimización, catálogo de indicadores, contrato entre el pipeline y la web
+  (`web/data/meta.json` con versión de esquema y huella del modelo) y una prueba de humo en navegador (escritorio y móvil).
+  Corre en GitHub Actions en cada push (`.github/workflows/ci.yml`) sin necesitar los datos privados.
+- `p05_exportar.py` aplica una puerta de calidad antes de publicar: probabilidades en [0, 1], nivel coherente con los
+  umbrales, una ficha por obra y ningún texto sin anonimizar.
+- Accesibilidad revisada con axe-core (WCAG 2 A/AA): sin violaciones en las tres vistas.
+
 ## Límites
 
 Predice el atraso legal (avance menor al 80 % de lo programado), no la paralización. Solo cubre obras por contrata

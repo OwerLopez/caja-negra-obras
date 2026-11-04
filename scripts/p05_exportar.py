@@ -4,11 +4,17 @@ Por obra: riesgo de atraso a 60 días, su evolución mes a mes y sus razones (co
 indicadores clave de plazo, avance, dinero e historial, auditoría de consultas (quién traba) e historia con la
 prueba escrita (asientos anonimizados). Además: resumen global y ficha técnica del modelo.
 
-Salida: web/data/resumen.json, web/data/obras.json, web/data/modelo.json, web/data/obra/<id>.json
+Antes de escribir se aplica una puerta de calidad (probabilidades en [0, 1], nivel coherente con los umbrales, una ficha por
+obra, textos anonimizados). meta.json fija el contrato con la web: versión de esquema, corte, huella del modelo y del código.
+
+Salida: web/data/resumen.json, web/data/obras.json, web/data/modelo.json, web/data/meta.json, web/data/obra/<id>.json
 """
+import hashlib
 import json
 import shutil
+import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -20,7 +26,9 @@ import pandas as pd  # noqa: E402
 
 from caja_negra import config as C  # noqa: E402
 from caja_negra.indicadores import CATALOGO, CATEGORICAS, GRUPOS, frase  # noqa: E402
-from caja_negra.texto import anonimizar  # noqa: E402
+from caja_negra.texto import RE_PERSONA, anonimizar  # noqa: E402
+
+ESQUEMA = 1  # subir si cambia la forma de los JSON que lee web/js
 
 sys.stdout.reconfigure(encoding="utf-8")
 con = duckdb.connect()
@@ -167,4 +175,33 @@ modelo_json = {
     "horizonte_dias": C.HORIZONTE,
 }
 (C.WEB_DATOS / "modelo.json").write_text(json.dumps(modelo_json, ensure_ascii=False), encoding="utf-8")
+
+# ---------------- puerta de calidad antes de publicar ----------------
+fichas = {p.stem for p in salida.glob("*.json")}
+assert fichas == {x["id"] for x in lista}, "cada obra listada debe tener su ficha y viceversa"
+for x in lista:
+    assert 0 <= x["probabilidad"] <= 1, x
+    esperado = "ALTO" if x["probabilidad"] >= cal["umbral_alto"] else "MEDIO" if x["probabilidad"] >= cal["umbral_medio"] else "BAJO"
+    assert x["nivel"] == esperado, (x["id"], x["nivel"], esperado)
+for p in salida.glob("*.json"):
+    ficha = json.loads(p.read_text(encoding="utf-8"))
+    textos = [c["texto"] for c in ficha["consultas"]] + [h["texto"] for h in ficha["hitos"]]
+    assert not any(RE_PERSONA.search(t or "") for t in textos), f"texto sin anonimizar en {p.name}"
+
+
+def huella(ruta):
+    return hashlib.sha256(Path(ruta).read_bytes()).hexdigest()[:16]
+
+
+try:
+    commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=C.RAIZ, capture_output=True, text=True, check=True).stdout.strip()
+except (OSError, subprocess.CalledProcessError):
+    commit = None
+meta = {"esquema": ESQUEMA, "corte": str(corte.date()), "generado": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "commit": commit, "obras": len(lista),
+        "modelo": {"huella": huella(C.TRABAJO / "modelo.txt"), "calibrador": huella(C.TRABAJO / "calibrador.joblib"),
+                   "arboles": modelo.num_trees(), "indicadores": len(VARS), "seleccionado": met["seleccion"]["modelo_final"]},
+        "fuentes": ["OECE cuaderno de obra digital", "MEF SIAF y Banco de Inversiones", "INFOBRAS", "SEACE / CONOSCE",
+                    "Contraloría, Informe N.° 001-2026-CG/SESNC"]}
+(C.WEB_DATOS / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
 print(json.dumps({"obras": len(lista), "por_nivel": resumen["por_nivel"], "top": [(x["probabilidad"], x["razon"]) for x in lista[:5]]}, ensure_ascii=False, indent=1))

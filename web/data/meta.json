@@ -1,0 +1,21 @@
+{
+ "esquema": 1,
+ "corte": "2026-08-31",
+ "generado": "2026-11-04T02:40:36Z",
+ "commit": "e4f64d7",
+ "obras": 139,
+ "modelo": {
+  "huella": "fbb516a5f197c216",
+  "calibrador": "5e0f194f09e8417a",
+  "arboles": 271,
+  "indicadores": 53,
+  "seleccionado": "M2"
+ },
+ "fuentes": [
+  "OECE cuaderno de obra digital",
+  "MEF SIAF y Banco de Inversiones",
+  "INFOBRAS",
+  "SEACE / CONOSCE",
+  "Contraloría, Informe N.° 001-2026-CG/SESNC"
+ ]
+}

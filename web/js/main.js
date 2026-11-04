@@ -1,6 +1,7 @@
 // Enrutador por hash: #/ panorama, #/obra/<id> ficha, #/modelo ficha técnica.
 
-import { esc } from "./formato.js";
+import * as D from "./datos.js";
+import { esc, fecha } from "./formato.js";
 import * as modelo from "./vistas/modelo.js";
 import * as obra from "./vistas/obra.js";
 import * as panorama from "./vistas/panorama.js";
@@ -42,5 +43,18 @@ async function enrutar() {
   }
 }
 
-window.addEventListener("hashchange", enrutar);
-enrutar();
+async function iniciar() {
+  try {
+    const m = await D.meta();
+    if (m.esquema !== D.ESQUEMA) throw new Error(`Los datos publicados (esquema ${m.esquema}) no corresponden a esta versión de la web (esquema ${D.ESQUEMA})`);
+    document.getElementById("version").textContent =
+      `Corte ${fecha(m.corte)} · modelo ${m.modelo.huella} (${m.modelo.arboles} árboles, ${m.modelo.indicadores} indicadores) · código ${m.commit ?? "local"} · generado ${m.generado.slice(0, 10)}`;
+  } catch (e) {
+    main.innerHTML = `<p class="error">${esc(e.message)}. Vuelve a ejecutar scripts/p05_exportar.py y publica web/ completa.</p>`;
+    return;
+  }
+  window.addEventListener("hashchange", enrutar);
+  enrutar();
+}
+
+iniciar();
