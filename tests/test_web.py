@@ -58,6 +58,20 @@ def test_recorrido_completo(url, navegador, ancho):
     assert pag.get_attribute("#f-nivel button[data-valor=ALTO]", "aria-pressed") == "true"
     assert all("Alto" in t for t in pag.locator(".tabla-obras tbody .nivel").all_inner_texts())
 
+    # recorrido guiado: se abre, avanza y se cierra con Escape devolviendo el foco
+    pag.click("#boton-recorrido")
+    pag.wait_for_selector(".globo")
+    assert "Paso 1 de" in pag.inner_text(".globo")
+    pag.click(".globo [data-accion=siguiente]")
+    assert "Paso 2 de" in pag.inner_text(".globo")
+    pag.keyboard.press("Escape")
+    assert pag.locator(".globo").count() == 0
+    assert pag.evaluate("document.activeElement.id") == "boton-recorrido"
+    # globo de definición
+    pag.locator(".resumen .termino-boton").first.click()
+    assert pag.locator(".termino-globo:not([hidden])").count() == 1
+    pag.keyboard.press("Escape")
+
     # estado vacío y recuperación
     pag.fill("#f-q", "zzzz-no-existe")
     pag.wait_for_selector(".estado")

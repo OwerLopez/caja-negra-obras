@@ -2,7 +2,6 @@
   "name": "caja-negra-obras-web",
   "private": true,
   "description": "Herramientas de calidad del frontend (web/): lint, typecheck y verificación de empaquetado. No se publican.",
-  "type": "module",
   "scripts": {
     "lint": "eslint web/js",
     "typecheck": "tsc -p jsconfig.json",

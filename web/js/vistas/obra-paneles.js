@@ -5,6 +5,7 @@ import { actividad } from "../graficos.js";
 import { esc, ESTADO, ESTADOS, fecha, num, pct } from "../formato.js";
 import { hojaAsiento } from "../ui/asiento.js";
 import { $, estadoVacio } from "../ui/componentes.js";
+import { termino } from "../ui/glosario.js";
 import { icono } from "../ui/iconos.js";
 
 /** @typedef {import("../tipos.js").Ficha} Ficha */
@@ -40,7 +41,7 @@ export function panelConsultas(o, corte) {
   if (!o.consultas.length) return estadoVacio({ titulo: "Esta obra no registra consultas del residente", texto: "Cuando el residente anote una consulta, aparecerá aquí con su plazo legal y su estado." });
   const orden = [...o.consultas].sort((a, b) => ESTADOS.indexOf(a.estado) - ESTADOS.indexOf(b.estado) || b.dias - a.dias);
   return `<p class="panel-bajada">Cada consulta tiene un plazo legal: 5 días si responde el supervisor o inspector y 21 si interviene la entidad con el proyectista
-      (días calendario). Elige un estado para filtrar y abre una consulta para ver el asiento original.</p>
+      (días calendario). Elige un estado para filtrar y abre una consulta para ver el ${termino("asiento", "asiento")} original.</p>
     <div class="filtro-estados" role="group" aria-label="Filtrar consultas por estado">
       <button type="button" data-estado="" aria-pressed="true"><b class="num">${num(o.consultas.length)}</b><span>Todas</span></button>
       ${ESTADOS.map((s) => `<button type="button" data-estado="${esc(s)}" aria-pressed="false" class="estado-${ESTADO[s].clase}" ${o.consultas_resumen[s] ? "" : "disabled"}>

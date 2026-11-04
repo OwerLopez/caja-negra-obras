@@ -6,6 +6,7 @@ import { aportes, lineaRiesgo } from "../graficos.js";
 import { esc, fecha, num, pct } from "../formato.js";
 import { enlace, reemplazar } from "../router.js";
 import { $, ayuda, chipNivel, conectarPestanas } from "../ui/componentes.js";
+import { termino } from "../ui/glosario.js";
 import { icono } from "../ui/iconos.js";
 import { conectarConsultas, conectarHistoria, panelConsultas, panelHistoria } from "./obra-paneles.js";
 
@@ -19,7 +20,7 @@ function lectura(o, mod) {
   const r = o.riesgo;
   const suben = r.aportes.filter((a) => a.peso > 0).slice(0, 3).map((a) => esc(a.frase.charAt(0).toLowerCase() + a.frase.slice(1)));
   return `<p class="lectura">Probabilidad de <b>${pct(r.probabilidad, 1)}</b>: ${num(r.veces_tasa_base, 1)} veces la tasa base de Arequipa
-    (${pct(mod.resultados.arequipa.prevalencia, 1)}). En la prueba del modelo, el ${pct(r.tasa_observada_nivel, 1)} de las obras con este nivel se atrasó.
+    (${pct(mod.resultados.arequipa.prevalencia, 1)}). En la prueba del modelo, el ${pct(r.tasa_observada_nivel, 1)} de los casos con este nivel terminó en atraso.
     ${suben.length ? `Lo que más empuja el riesgo: ${suben.join("; ")}.` : ""}</p>`;
 }
 
@@ -35,7 +36,7 @@ function indicadores(o) {
 /** @param {Ficha} o @param {Modelo} mod */
 const panelResumen = (o, mod) => `<div class="rejilla-2">
     <section class="bloque" aria-labelledby="t-razones">
-      <h2 id="t-razones">Por qué tiene este riesgo</h2>
+      <h2 id="t-razones">Por qué tiene este riesgo</h2><p class="panel-bajada">Datos de la obra que más influyeron en el cálculo (${termino("cómo leerlos", "razones")}).</p>
       ${lectura(o, mod)}
       <div class="leyenda" aria-hidden="true"><span class="ley-baja">Baja el riesgo</span><span class="ley-sube">Sube el riesgo</span></div>
       ${aportes(o.riesgo.aportes)}
@@ -86,7 +87,7 @@ export async function render(main, id, sub) {
       </dl>
     </div>
     <aside class="ficha-riesgo riesgo-${r.nivel}" aria-label="Riesgo de atraso">
-      <p class="ficha-riesgo-etiqueta">Riesgo de atraso legal en ${mod.horizonte_dias} días</p>
+      <p class="ficha-riesgo-etiqueta">${termino("Riesgo de atraso legal", "riesgo")} en ${mod.horizonte_dias} días</p>
       <p class="ficha-riesgo-cifra num">${pct(r.probabilidad, 1)}</p>
       ${chipNivel(r.nivel)}
       <p class="ficha-riesgo-nota">${num(r.veces_tasa_base, 1)} veces la tasa base. Corte del ${fecha(meta.corte)}.</p>

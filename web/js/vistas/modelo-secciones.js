@@ -4,6 +4,7 @@
 import { barras, calibracion } from "../graficos.js";
 import { esc, fecha, NIVELES, num, pct } from "../formato.js";
 import { chipNivel } from "../ui/componentes.js";
+import { termino } from "../ui/glosario.js";
 
 /** @typedef {import("../tipos.js").Modelo} Modelo */
 /** @typedef {import("../tipos.js").Resumen} Resumen */
@@ -95,8 +96,8 @@ export function tablaResultados(mod, ambito) {
   return `<p class="panel-bajada">${ambito === "arequipa" ? "Arequipa" : "Todo el país"}: ${num(R.filas)} obras-mes de ${num(R.obras)} obras, con ${num(R.positivos)} atrasos
       (tasa base ${pct(R.prevalencia, 1)}). Precisión@20: de cada 100 obras marcadas en el 20 % de mayor riesgo, cuántas se atrasaron.</p>
     <div class="tabla-marco" tabindex="0" role="region" aria-label="Tabla de resultados por método"><table class="tabla">
-      <thead><tr><th scope="col">Método</th><th scope="col" class="der">PR-AUC <small>(IC 95 %)</small></th><th scope="col" class="der">Precisión@20</th>
-        <th scope="col" class="der">Lift@20</th><th scope="col" class="der">ROC-AUC</th><th scope="col" class="der">Brier</th><th scope="col" class="der">¿Caja Negra es mejor? <small>(p)</small></th></tr></thead>
+      <thead><tr><th scope="col">Método</th><th scope="col" class="der">${termino("PR-AUC", "prauc")} <small>(IC 95 %)</small></th><th scope="col" class="der">${termino("Precisión@20", "precision20")}</th>
+        <th scope="col" class="der">${termino("Lift@20", "lift")}</th><th scope="col" class="der">${termino("ROC-AUC", "roc")}</th><th scope="col" class="der">${termino("Brier", "brier")}</th><th scope="col" class="der">¿Caja Negra es mejor? <small>(${termino("p", "p")})</small></th></tr></thead>
       <tbody>${Object.entries(R.modelos).map(([k, m]) => {
         const c = R.comparacion_pareada[k];
         return `<tr class="${k === "M Caja Negra" ? "fila-destacada" : ""}"><th scope="row">${esc(nombreModelo(k))}</th>

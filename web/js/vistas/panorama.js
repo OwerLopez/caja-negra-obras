@@ -6,6 +6,7 @@ import { distribucion } from "../graficos.js";
 import { esc, fecha, millones, NIVEL, NIVELES, num, pct } from "../formato.js";
 import { enlace, reemplazar } from "../router.js";
 import { $, ayuda, chipNivel, conectarSegmentado, estadoVacio, paginador, segmentado } from "../ui/componentes.js";
+import { termino } from "../ui/glosario.js";
 import { icono } from "../ui/iconos.js";
 
 /** @typedef {import("../tipos.js").ObraResumen} ObraResumen */
@@ -98,21 +99,21 @@ export async function render(main, query) {
   <header class="pagina-cabeza">
     <h1>Obras públicas en ejecución en Arequipa</h1>
     <p class="bajada">Qué obras conviene revisar primero, según lo escrito en su cuaderno de obra hasta el ${fecha(meta.corte)}.
-      El riesgo es la probabilidad de caer en atraso legal en los próximos ${mod.horizonte_dias} días.</p>
+      El riesgo es la probabilidad de caer en ${termino("atraso legal", "atraso")} en los próximos ${mod.horizonte_dias} días.</p>
   </header>
 
   <section class="resumen" aria-labelledby="t-resumen">
     <h2 id="t-resumen" class="solo-lector">Resumen del corte</h2>
     <div class="resumen-principal">
-      <p class="resumen-cifra"><b class="num">${num(obras.length)}</b> obras en ejecución, por nivel de riesgo</p>
+      <p class="resumen-cifra"><b class="num">${num(obras.length)}</b> obras en ejecución, por ${termino("nivel de riesgo", "nivel")}</p>
       ${distribucion(res.por_nivel, obras.length)}
       <dl class="niveles-leyenda">
         ${NIVELES.map((k) => `<div><dt>${chipNivel(k)}</dt><dd>${k === "ALTO" ? `probabilidad desde ${pct(mod.niveles.umbral_alto, 1)}` : k === "MEDIO" ? `desde ${pct(mod.niveles.umbral_medio, 1)}` : `menos de ${pct(mod.niveles.umbral_medio, 1)}`}.
-          En la prueba se atrasó el ${pct(nAqp[k].tasa_observada, 1)} de las obras de este nivel.</dd></div>`).join("")}
+          En la prueba, el ${pct(nAqp[k].tasa_observada, 1)} de los casos de este nivel terminó en atraso.</dd></div>`).join("")}
       </dl>
     </div>
     <div class="resumen-lateral">
-      <div class="dato"><span class="dato-icono">${icono("reloj")}</span><p><b class="num">${num(conVencidas)}</b> obras tienen consultas con plazo vencido y sin respuesta en el cuaderno
+      <div class="dato"><span class="dato-icono">${icono("reloj")}</span><p><b class="num">${num(conVencidas)}</b> obras tienen ${termino("consultas vencidas", "vencida")} sin respuesta en el cuaderno
         <span class="tenue">(${num(vencidas)} consultas en total)</span></p></div>
       <div class="dato"><span class="dato-icono">${icono("alerta")}</span><p><b class="num">${num(c.obras_paralizadas_arequipa)}</b> obras ya estaban paralizadas en Arequipa al 31-03-2026,
         con ${millones(c.costo_actualizado_arequipa)} de costo actualizado <span class="tenue">(Contraloría)</span></p></div>

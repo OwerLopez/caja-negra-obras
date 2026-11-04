@@ -12,15 +12,20 @@ RAIZ = Path(__file__).resolve().parents[1]
 FIG = RAIZ / "informe" / "figuras"
 URL = "http://127.0.0.1:8765/"
 OBRA = json.loads((RAIZ / "web" / "data" / "obras.json").read_text(encoding="utf-8"))[0]["id"]
+SIN_INVITACION = "try { localStorage.setItem('cn-recorrido-visto', '1') } catch (e) {}"
 
 
-def panel(pag, titulo):
-    return pag.locator("section.panel", has=pag.locator("h2", has_text=titulo))
+def foto(loc, nombre):
+    loc.scroll_into_view_if_needed()
+    loc.page.wait_for_timeout(250)
+    loc.screenshot(path=str(FIG / nombre))
 
 
 with sync_playwright() as p:
     nav = p.chromium.launch(channel="msedge")
-    pag = nav.new_page(viewport={"width": 1366, "height": 860}, device_scale_factor=2)
+    ctx = nav.new_context(viewport={"width": 1366, "height": 860}, device_scale_factor=2)
+    ctx.add_init_script(SIN_INVITACION)
+    pag = ctx.new_page()
     pag.goto(URL)
     pag.wait_for_selector(".tabla-obras tbody tr")
     pag.wait_for_timeout(500)
@@ -30,24 +35,33 @@ with sync_playwright() as p:
     pag.wait_for_selector(".aportes")
     pag.wait_for_timeout(500)
     pag.screenshot(path=str(FIG / "c02_ficha.png"))
-    panel(pag, "Indicadores clave").screenshot(path=str(FIG / "c03_indicadores.png"))
-    pag.locator(".consulta > button").first.click()
-    pag.wait_for_timeout(400)
-    panel(pag, "Consultas del residente").screenshot(path=str(FIG / "c04_consultas.png"))
-    panel(pag, "Historia del cuaderno").screenshot(path=str(FIG / "c05_historia.png"))
+    foto(pag.locator("section[aria-labelledby=t-indicadores]"), "c03_indicadores.png")
+    pag.click("#tab-consultas")
+    pag.locator(".consulta-cabeza").first.click()
+    pag.wait_for_timeout(300)
+    foto(pag.locator("#panel-consultas"), "c04_consultas.png")
+    pag.click("#tab-historia")
+    foto(pag.locator("#panel-historia"), "c05_historia.png")
 
     pag.goto(URL + "#/modelo")
-    pag.wait_for_selector("#ejemplo table")
-    pag.wait_for_timeout(400)
-    panel(pag, "Fórmulas").screenshot(path=str(FIG / "c06_formulas.png"))
-    panel(pag, "Ejemplo resuelto").screenshot(path=str(FIG / "c07_ejemplo.png"))
-    panel(pag, "Resultados en la prueba").screenshot(path=str(FIG / "c08_metricas.png"))
-    pag.locator(".rejilla.dos").first.screenshot(path=str(FIG / "c09_importancia.png"))
+    pag.wait_for_selector("#catalogo tr")
+    for seccion, nombre in (("#formulas", "c06_formulas.png"), ("#ejemplo", "c07_ejemplo.png"), ("#resultados", "c08_metricas.png"), ("#pesos", "c09_importancia.png")):
+        foto(pag.locator(seccion), nombre)
 
-    movil = nav.new_page(viewport={"width": 390, "height": 844}, device_scale_factor=2)
-    movil.goto(URL)
-    movil.wait_for_selector(".tabla-obras tbody tr")
-    movil.wait_for_timeout(400)
-    movil.screenshot(path=str(FIG / "c10_movil.png"))
+    # recorrido guiado en su primer paso
+    pag.goto(URL)
+    pag.wait_for_selector(".tabla-obras tbody tr")
+    pag.click("#boton-recorrido")
+    pag.wait_for_selector(".globo")
+    pag.wait_for_timeout(600)
+    pag.screenshot(path=str(FIG / "c11_recorrido.png"))
+
+    movil = nav.new_context(viewport={"width": 390, "height": 844}, device_scale_factor=2)
+    movil.add_init_script(SIN_INVITACION)
+    m = movil.new_page()
+    m.goto(URL)
+    m.wait_for_selector(".tabla-obras tbody tr")
+    m.wait_for_timeout(400)
+    m.screenshot(path=str(FIG / "c10_movil.png"))
     nav.close()
 print("ok")
