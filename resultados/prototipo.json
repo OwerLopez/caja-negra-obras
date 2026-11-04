@@ -3,9 +3,18 @@
  "peso_obras_json_kb": 77.2,
  "peso_ficha_kb_mediana": 9.0,
  "peso_ficha_kb_max": 124.1,
- "peso_web_total_kb": 2261.1,
- "ms_lista_hasta_mostrar_obras_mediana": 678,
- "ms_abrir_ficha_mediana": 646,
+ "peso_web_total_kb": 2263.0,
+ "axe_violaciones_wcag_aa": {
+  "panorama": 0,
+  "obra": 0,
+  "modelo": 0
+ },
+ "pruebas": {
+  "passed": 114,
+  "failed": 0
+ },
+ "ms_lista_hasta_mostrar_obras_mediana": 566,
+ "ms_abrir_ficha_mediana": 625,
  "errores_consola": 0,
  "errores_texto": [],
  "condiciones": "servidor local, Edge sin caché por pestaña nueva, 5 repeticiones"
