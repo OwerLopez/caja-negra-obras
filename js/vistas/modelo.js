@@ -117,10 +117,10 @@ export async function render(main) {
   </header>
 
   <ol class="pasos">
-    <li><h3>Leer</h3><p>Se descargan los asientos del cuaderno de obra digital (OECE) y se cruzan con contrato, SIAF e INFOBRAS por obra.</p></li>
-    <li><h3>Enlazar</h3><p>Cada consulta del residente se une a su respuesta por reglas y, si no cita el número, por lectura del texto con IA.</p></li>
-    <li><h3>Medir plazos</h3><p>Se cuentan los días de cada consulta frente al plazo legal de 5 o 21 días y se identifica quién debe responder.</p></li>
-    <li><h3>Predecir y explicar</h3><p>${mod.catalogo.length} indicadores → probabilidad calibrada → nivel, con las razones de cada obra y el asiento que lo prueba.</p></li>
+    <li><h2>Leer</h2><p>Se descargan los asientos del cuaderno de obra digital (OECE) y se cruzan con contrato, SIAF e INFOBRAS por obra.</p></li>
+    <li><h2>Enlazar</h2><p>Cada consulta del residente se une a su respuesta por reglas y, si no cita el número, por lectura del texto con IA.</p></li>
+    <li><h2>Medir plazos</h2><p>Se cuentan los días de cada consulta frente al plazo legal de 5 o 21 días y se identifica quién debe responder.</p></li>
+    <li><h2>Predecir y explicar</h2><p>${mod.catalogo.length} indicadores → probabilidad calibrada → nivel, con las razones de cada obra y el asiento que lo prueba.</p></li>
   </ol>
 
   <section class="panel">

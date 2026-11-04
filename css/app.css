@@ -6,7 +6,7 @@
   --renglon: #202b38;
   --texto: #e6edf3;
   --suave: #95a3b3;
-  --tenue: #66768a;
+  --tenue: #8090a3;
   --sello: #7aa2ff;
   --sello-fondo: rgba(122, 162, 255, .12);
   --alto: #ff6b5b;
@@ -177,7 +177,7 @@ svg.grafico text { fill: var(--suave); font: 11px "Archivo", sans-serif; }
 .pasos { list-style: none; counter-reset: paso; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 0; margin: 0 0 18px; }
 .pasos li { counter-increment: paso; background: var(--panel); border: 1px solid var(--borde); border-radius: var(--radio); padding: 16px; }
 .pasos li::before { content: counter(paso); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--sello-fondo); color: var(--sello); font-weight: 700; margin-bottom: 10px; }
-.pasos h3 { font-size: .98rem; margin-bottom: 6px; }
+.pasos h2 { font-size: .98rem; margin-bottom: 6px; }
 .pasos p { margin: 0; color: var(--suave); font-size: .86rem; }
 .tabla { width: 100%; border-collapse: collapse; font-size: .86rem; }
 .tabla th { text-align: left; color: var(--suave); font-weight: 600; font-size: .76rem; padding: 8px 10px; border-bottom: 1px solid var(--borde); }
@@ -242,3 +242,4 @@ main > .panel, main > .rejilla { margin-bottom: 16px; }
   .cifras-2 { grid-template-columns: 1fr; }
   .ficha-datos div { flex-direction: column; gap: 0; }
 }
+.pie p.version { border-top: 0; padding-top: 6px; font-size: .76rem; color: var(--tenue); }

@@ -121,7 +121,7 @@ export async function render(main, id) {
 
   <section class="panel">
     <h2>Historia del cuaderno</h2>
-    <div class="leyenda"><span style="--c:var(--sello);opacity:.7">Asientos</span><span style="--c:var(--medio)">Consultas</span><span style="--c:var(--alto)">Suspensión, ampliación, riesgo o penalidad</span></div>
+    <div class="leyenda"><span style="--c:var(--sello)">Asientos</span><span style="--c:var(--medio)">Consultas</span><span style="--c:var(--alto)">Suspensión, ampliación, riesgo o penalidad</span></div>
     ${actividad(o.meses)}
     ${hitos.length ? "" : `<p class="nota">El cuaderno no registra hitos formales (inicio del plazo, suspensión, ampliación, adicional, penalidad, riesgo…).</p>`}
     <ol class="hitos" id="hitos">${hitos
