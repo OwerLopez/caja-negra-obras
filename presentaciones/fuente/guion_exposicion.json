@@ -1,0 +1,50 @@
+{
+  "presentacion": "Caja_Negra_de_Obra_Exposicion.pptx",
+  "notas": "presentaciones/fuente/notas.json",
+  "salida": "presentaciones/Guion_Exposicion.docx",
+  "subtitulo": "Guion de exposición para cinco integrantes",
+  "introduccion": "Cada bloque dura entre 3 y 5 minutos y cubre contenido técnico propio; la demostración va al final, dentro del bloque 5. Las diapositivas no llevan nombres: asignen cada bloque a un integrante en la tabla.",
+  "tiempos": { "1": 30, "2": 90, "3": 90, "4": 60, "5": 75, "6": 75, "7": 60, "8": 60, "9": 60, "10": 75, "11": 75, "12": 90, "13": 90, "14": 60, "15": 60, "16": 120, "17": 60 },
+  "bloques": [
+    { "nombre": "Bloque 1 · Contexto y problema", "diapositivas": [1, 2, 3],
+      "enfoque": "Presenta el proyecto, el origen oficial del problema y el árbol de problemas con las dos cifras que medimos.",
+      "transicion": "«Con el problema claro, mi compañero explica qué investigamos, qué propusimos y con qué datos trabajamos.»" },
+    { "nombre": "Bloque 2 · Investigación, propuesta, factores y datos", "diapositivas": [4, 5, 6, 7],
+      "enfoque": "Explica la brecha encontrada en los antecedentes, la propuesta y su alcance, los 53 indicadores con sus criterios de selección y la calidad de las fuentes.",
+      "transicion": "«Ya sabemos qué datos usamos; ahora mi compañero explica cómo los procesamos y con qué métricas medimos todo.»" },
+    { "nombre": "Bloque 3 · Metodología, procesamiento y métricas", "diapositivas": [8, 9, 10, 11],
+      "enfoque": "Explica la metodología, el pipeline con sus controles de calidad y, con detalle, cada medida y métrica: fórmula, unidad, interpretación y criterio.",
+      "transicion": "«Con las métricas definidas, mi compañero muestra cómo funciona el modelo, qué resultados obtuvo y cómo se integra en la arquitectura.»" },
+    { "nombre": "Bloque 4 · Modelo, evaluación y arquitectura", "diapositivas": [12, 13, 14],
+      "enfoque": "Explica el modelo de ML con sus fórmulas, la evaluación fuera de tiempo con resultados honestos y la responsabilidad de cada pieza de la arquitectura.",
+      "transicion": "«Para cerrar, mi compañero recorre el flujo completo y lo demuestra en el sistema publicado.»" },
+    { "nombre": "Bloque 5 · Flujo integral, demostración y conclusiones", "diapositivas": [15, 16, 17],
+      "enfoque": "Recorre el flujo de punta a punta, hace la demostración en vivo y cierra separando lo implementado, lo validado y lo planificado.",
+      "transicion": "Cierre: agradecer y abrir la ronda de preguntas. Cualquier integrante responde según su bloque." }
+  ],
+  "antes": [
+    "Abrir el sitio publicado (owerlopez.github.io/caja-negra-obras) en una pestaña aparte antes de la exposición, para la demostración del bloque 5.",
+    "Si falla internet, usar las capturas de la diapositiva 16, que son del sistema real con el corte del 31 de agosto de 2026.",
+    "Todas las cifras salen de los archivos de resultados del proyecto; no redondear ni cambiar valores al hablar.",
+    "Regla de lenguaje: decir «prioridad de revisión», nunca «obra culpable»; decir «sin respuesta en el cuaderno», no «no respondida»."
+  ],
+  "demo": {
+    "diapositiva": 16,
+    "pasos": [
+      "Entrada: en el pie de página del sitio, mostrar el corte (31 de agosto de 2026) y la huella del modelo.",
+      "Procesamiento: abrir «Cómo funciona», sección «Los indicadores», y buscar «plazo» para mostrar que cada indicador tiene fórmula y fuente.",
+      "Modelo ML: volver a Panorama y abrir la obra de mayor riesgo; leer su probabilidad y las tres razones principales.",
+      "Resultado: en Panorama, filtrar «Alto» y activar «Solo con consultas vencidas».",
+      "Visualización: en la ficha, pestaña «Consultas», abrir una consulta vencida y leer el asiento original como prueba.",
+      "Opcional (30 s): pulsar «Recorrido guiado» o «Leyenda» para mostrar cómo la web se explica sola a quien no conoce el tema."
+    ]
+  },
+  "preguntas": [
+    ["¿Por qué PR-AUC y no exactitud?", "Porque el atraso es raro (7 % en Arequipa): decir siempre «no se atrasa» acertaría 93 % y no serviría.", "3"],
+    ["¿El modelo vio el futuro?", "No: cada indicador usa solo datos con fecha anterior al cierre; se entrenó hasta septiembre de 2025 y se probó de enero a junio de 2026.", "3 y 4"],
+    ["¿Por qué no eligieron el modelo que salió mejor en Arequipa?", "Porque el modelo se elige con la validación, antes de mirar la prueba; cambiarlo después sería hacer trampa.", "4"],
+    ["¿Cómo saben que el emparejador acierta sin etiquetar a mano?", "Usamos respuestas que citan el número de la consulta, borramos ese número y le pedimos al sistema que la adivine.", "3"],
+    ["¿Dónde está la base de datos?", "No hay servidor en línea: los datos se guardan en Parquet, se consultan con DuckDB en el pipeline y se publican como JSON con contrato.", "4"],
+    ["¿Qué falta?", "La prueba de uso con supervisores reales (SUS) y que el OECE publique el identificador de asiento.", "5"]
+  ]
+}

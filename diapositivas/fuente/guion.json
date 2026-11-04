@@ -1,0 +1,55 @@
+{
+  "presentacion": "Caja_Negra_de_Obra.pptx",
+  "notas": "diapositivas/fuente/notas.json",
+  "salida": "diapositivas/Guion_Caja_Negra_de_Obra.docx",
+  "subtitulo": "Guion explicativo de la presentación «cómo lo construimos», para cinco integrantes",
+  "introduccion": "La presentación explica cómo pensamos y construimos el sistema como equipo: decisiones, datos, componentes, evaluación y calidad. Se divide en cinco bloques consecutivos de 4 a 6 minutos; la demostración en vivo va en el bloque 5, sobre la diapositiva 23. Las diapositivas de sección (5, 10, 18 y 22) se pasan en segundos, solo leyendo su título. Asignen cada bloque a un integrante en la tabla.",
+  "fuera_de_tiempo": "los anexos A y B (diapositivas 29 y 30) no se exponen: se muestran solo si preguntan por los patrones de los datos o por la tabla completa de resultados.",
+  "tiempos": { "1": 30, "2": 60, "3": 75, "4": 60, "5": 10, "6": 75, "7": 60, "8": 90, "9": 60, "10": 10, "11": 75, "12": 60, "13": 60, "14": 45, "15": 60,
+    "16": 60, "17": 60, "18": 10, "19": 75, "20": 60, "21": 60, "22": 10, "23": 135, "24": 45, "25": 40, "26": 40, "27": 30, "28": 45 },
+  "bloques": [
+    { "nombre": "Bloque 1 · El problema y por qué vale la pena", "diapositivas": [1, 2, 3, 4],
+      "enfoque": "Presenta el proyecto, la idea central con la metáfora de la caja negra, la evidencia (cifras oficiales y medidas) y el árbol de problemas, mostrando cómo cada causa se convirtió en un componente.",
+      "transicion": "«Con el problema claro, mi compañero explica cómo lo pensamos como equipo antes de escribir una sola línea de código.»" },
+    { "nombre": "Bloque 2 · Cómo lo pensamos como equipo", "diapositivas": [5, 6, 7, 8, 9],
+      "enfoque": "Explica el proceso de trabajo y las cuatro reglas que no se negocian, los requerimientos con atributos de calidad medidos, las decisiones de arquitectura con su costo aceptado y la arquitectura en cinco capas.",
+      "transicion": "«Definida la arquitectura, mi compañero explica cómo construimos los datos y los primeros componentes de inteligencia.»" },
+    { "nombre": "Bloque 3 · Cómo construimos los datos y la IA", "diapositivas": [10, 11, 12, 13, 14, 15],
+      "enfoque": "Explica de dónde sale cada dato y la regla del corte temporal, el pipeline reproducible con su puerta de calidad, el emparejador consulta–respuesta, el motor de plazos legales y los 53 indicadores.",
+      "transicion": "«Con los indicadores listos, mi compañero muestra cómo predice el modelo, cómo lo evaluamos sin engañarnos y qué resultados obtuvimos.»" },
+    { "nombre": "Bloque 4 · Cómo predice y qué obtuvimos", "diapositivas": [16, 17, 18, 19, 20, 21],
+      "enfoque": "Explica las cuatro fórmulas del modelo, la lista de control de la evaluación con sus métricas, los resultados con la parte que no salió tan bien, qué aporta cada grupo de indicadores y un ejemplo resuelto con números reales.",
+      "transicion": "«Para cerrar, mi compañero muestra cómo llega el modelo a la pantalla, lo demuestra en vivo y explica cómo aseguramos la calidad y nos organizamos.»" },
+    { "nombre": "Bloque 5 · Del modelo a la pantalla, calidad y cierre", "diapositivas": [22, 23, 24, 25, 26, 27, 28],
+      "enfoque": "Explica el contrato de datos entre el ML y la web y hace la demostración en vivo; luego la calidad medida, los roles e hitos del equipo, los riesgos con sus controles, los límites y las conclusiones.",
+      "transicion": "Cierre: agradecer y abrir la ronda de preguntas. Cada integrante responde sobre su bloque; los anexos se muestran si preguntan." }
+  ],
+  "antes": [
+    "Abrir el sitio publicado (owerlopez.github.io/caja-negra-obras) en una pestaña aparte, para la demostración de la diapositiva 23.",
+    "Si falla internet, explicar con la captura de la diapositiva 23, que es del sistema real.",
+    "Todas las cifras salen de los archivos de resultados del proyecto: decirlas tal como aparecen, sin redondear.",
+    "Regla de lenguaje: decir «prioridad de revisión», nunca «obra culpable»; decir «sin respuesta en el cuaderno», no «no respondida».",
+    "Hablar de decisiones y razones, no de pantallas: la demostración dura dos minutos y va al final."
+  ],
+  "demo": {
+    "diapositiva": 23,
+    "pasos": [
+      "Pie de página: mostrar el corte de los datos, la huella del modelo y el commit del código. Es el contrato de datos en vivo.",
+      "Panorama: señalar la distribución por nivel y la leyenda de niveles; filtrar «Alto» y activar «Solo con consultas vencidas».",
+      "Ficha de la obra de mayor riesgo: leer su probabilidad y las tres razones principales (barras rojas).",
+      "Pestaña «Consultas»: abrir una consulta vencida y leer el asiento original como prueba escrita.",
+      "«Cómo funciona»: mostrar la parte «En palabras simples» para todo público y, debajo, el ejemplo resuelto para especialistas.",
+      "Cierre de la demo (20 s): pulsar «Recorrido guiado» o «Leyenda» para mostrar que la web se explica sola a cualquier ciudadano."
+    ]
+  },
+  "preguntas": [
+    ["¿Por qué un proceso por lotes y no una API?", "El OECE publica los datos una vez al mes; procesar una vez por corte cuesta cero, es reproducible y no expone servidores ni credenciales.", "2"],
+    ["¿Por qué LightGBM y no una red neuronal?", "Los datos son tablas de indicadores; LightGBM funciona muy bien con ellas, corre en CPU y permite explicar cada alerta con TreeSHAP.", "2 y 4"],
+    ["¿El modelo vio el futuro?", "No: cada indicador usa solo datos con fecha anterior al cierre de mes; se entrenó hasta septiembre de 2025 y se probó de enero a junio de 2026.", "3"],
+    ["¿Por qué PR-AUC y no exactitud?", "Porque el atraso es raro: decir siempre «no se atrasa» acertaría más del 90 % y no serviría para elegir qué revisar.", "4"],
+    ["¿Por qué no eligieron el modelo que salió mejor en Arequipa?", "Porque el modelo se elige con la validación, antes de mirar la prueba; cambiarlo después sería hacer trampa.", "4"],
+    ["¿Cómo se conecta el ML con la web?", "Con un contrato de datos: el pipeline publica JSON con versión de esquema y huella del modelo, y la web se niega a mostrar datos de otro esquema.", "5"],
+    ["¿Un ciudadano entiende la web?", "Sí: «Cómo funciona» empieza en palabras simples, cada pantalla tiene recorrido guiado, hay leyenda de colores y botones «?» con definiciones.", "5"],
+    ["¿Qué falta?", "La prueba de uso con supervisores reales (SUS) y que el OECE publique el identificador de asiento para validar los enlaces.", "5"]
+  ]
+}

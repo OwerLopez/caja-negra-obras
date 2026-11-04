@@ -374,7 +374,7 @@ s = nueva("4 · Modelo, evaluación y arquitectura", "Arquitectura: cinco capas 
   "La arquitectura integra datos, ML, backend y frontend. El backend no es un servidor: es el pipeline en Python que corre una vez por corte mensual. No hay base de datos en línea: los datos se guardan en Parquet y se consultan con DuckDB durante el procesamiento. La comunicación entre el ML y la web es un contrato: archivos JSON con una versión de esquema y la huella del modelo que los generó. El frontend solo lee esos archivos y muestra el resultado. Con esto termina mi bloque y pasamos al flujo completo y la demostración.");
 const capas = [["Fuentes", "OECE · MEF · INFOBRAS · SEACE · Contraloría", "datos abiertos"], ["Ingesta y almacenamiento", "Depuración, Parquet consultado con DuckDB, linaje SHA-256", "base de datos de archivos"],
   ["Inteligencia (ML)", `Emparejador · motor de plazos · ${NVAR} indicadores · predictor`, "Sentence-BERT · LightGBM"], ["Publicación (contrato)", "JSON por obra + meta.json: esquema, corte y huella del modelo", "puerta de calidad"],
-  ["Presentación (frontend)", "Panorama · Ficha de obra · Cómo predice · recorrido guiado", "JS modular · GitHub Pages"]];
+  ["Presentación (frontend)", "Panorama · Ficha · Cómo funciona · recorrido y leyenda", "JS modular · GitHub Pages"]];
 capas.forEach(([t, d, tec], i) => {
   const y = 1.35 + i * 1.08;
   caja(s, 0.6, y, 7.9, 0.9, `capa-${i}`, i === 2 ? CIELO : NIEBLA, i === 2 ? "B9C8E8" : BORDE);

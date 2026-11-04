@@ -103,6 +103,21 @@ def test_recorrido_completo(url, navegador, ancho):
     pag.locator("#tab-historia").click()
     assert pag.locator("#panel-historia").is_visible()
 
+    # el recorrido de la ficha recorre también las pestañas
+    pag.click("#boton-recorrido")
+    pag.wait_for_selector(".globo")
+    for _ in range(6):
+        pag.click(".globo [data-accion=siguiente]")
+    assert pag.get_attribute("#tab-consultas", "aria-selected") == "true"
+    pag.keyboard.press("Escape")
+
+    # leyenda: se abre como diálogo y se cierra con Escape
+    pag.click("#boton-leyenda")
+    pag.wait_for_selector("dialog.leyenda-dialogo[open]")
+    assert "Nivel de riesgo" in pag.inner_text("dialog.leyenda-dialogo")
+    pag.keyboard.press("Escape")
+    assert pag.locator("dialog[open]").count() == 0
+
     # ficha técnica: cambio de ámbito y catálogo filtrable
     pag.goto(url + "#/modelo")
     pag.wait_for_selector("#catalogo tr")

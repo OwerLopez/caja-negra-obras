@@ -22,7 +22,7 @@ Curso: Gestión de Sistemas y Tecnologías de Información, Escuela Profesional 
 | ¿Quién la está trabando? | Cada consulta del residente con su veredicto según el plazo legal (5 o 21 días) y el responsable |
 | ¿Qué está pasando? | Plazo consumido frente a avance, dinero devengado, historial de los actores, actividad del cuaderno y hechos formales |
 
-La vista «Cómo predice» del prototipo muestra las fórmulas, un ejemplo resuelto, las métricas con su intervalo, la ablación por grupo y el catálogo completo de indicadores.
+La vista «Cómo funciona» explica primero en palabras simples cómo se calcula el riesgo y qué tan confiable es; luego, para especialistas, muestra las fórmulas, un ejemplo resuelto, las métricas con su intervalo, la ablación por grupo y el catálogo completo de indicadores.
 
 Toda afirmación muestra el asiento original del cuaderno (texto anonimizado).
 

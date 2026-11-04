@@ -5,7 +5,7 @@ import * as D from "../datos.js";
 import { aportes, lineaRiesgo } from "../graficos.js";
 import { esc, fecha, num, pct } from "../formato.js";
 import { enlace, reemplazar } from "../router.js";
-import { $, ayuda, chipNivel, conectarPestanas } from "../ui/componentes.js";
+import { $, chipNivel, conectarPestanas } from "../ui/componentes.js";
 import { termino } from "../ui/glosario.js";
 import { icono } from "../ui/iconos.js";
 import { conectarConsultas, conectarHistoria, panelConsultas, panelHistoria } from "./obra-paneles.js";
@@ -24,13 +24,23 @@ function lectura(o, mod) {
     ${suben.length ? `Lo que más empuja el riesgo: ${suben.join("; ")}.` : ""}</p>`;
 }
 
+/** Nombre corto de los indicadores clave que publica p05, para listar los que no tienen dato. */
+const NOMBRE_INDICADOR = {
+  plazo_consumido: "plazo consumido", dias_restantes_plazo: "días restantes del plazo", avance_reportado: "avance físico reportado",
+  plazo_vs_avance: "plazo frente a avance", ampliaciones: "ampliaciones de plazo", consultas_vencidas: "consultas vencidas",
+  devengado_sobre_viable: "dinero pagado frente a la inversión", meses_sin_devengado: "meses sin pagos", contratista_atrasos_previos: "atrasos previos del contratista",
+  entidad_atrasos_previos: "atrasos previos de la entidad", lluvias_en_horizonte: "temporada de lluvias", log_monto_contratado: "monto contratado",
+};
+
 /** @param {Ficha} o */
 function indicadores(o) {
   /** @type {Map<string, Ficha["indicadores"]>} */
   const grupos = new Map();
-  o.indicadores.forEach((x) => grupos.set(x.grupo, [...(grupos.get(x.grupo) ?? []), x]));
+  o.indicadores.filter((x) => x.frase).forEach((x) => grupos.set(x.grupo, [...(grupos.get(x.grupo) ?? []), x]));
+  const faltan = o.indicadores.filter((x) => !x.frase).map((x) => /** @type {Record<string, string>} */ (NOMBRE_INDICADOR)[x.variable] ?? x.variable);
   return `<div class="indicadores">${[...grupos].map(([g, lista]) => `<div class="indicador-grupo"><h3>${esc(g)}</h3><ul>
-      ${lista.map((x) => `<li class="${x.frase ? "" : "sin-dato"}">${x.frase ? esc(x.frase) : "Sin dato en la fuente para esta obra"}</li>`).join("")}</ul></div>`).join("")}</div>`;
+      ${lista.map((x) => `<li>${esc(x.frase)}</li>`).join("")}</ul></div>`).join("")}</div>
+    ${faltan.length ? `<p class="nota sin-dato-nota">${icono("info")}Sin dato en las fuentes oficiales para esta obra: ${esc(faltan.join(", "))}.</p>` : ""}`;
 }
 
 /** @param {Ficha} o @param {Modelo} mod */
@@ -40,9 +50,8 @@ const panelResumen = (o, mod) => `<div class="rejilla-2">
       ${lectura(o, mod)}
       <div class="leyenda" aria-hidden="true"><span class="ley-baja">Baja el riesgo</span><span class="ley-sube">Sube el riesgo</span></div>
       ${aportes(o.riesgo.aportes)}
-      ${ayuda("Cómo se calculan estas razones", `<p>El modelo suma ${num(mod.arboles)} árboles de decisión. TreeSHAP reparte ese puntaje entre los
-        indicadores de la obra: cada barra es lo que aporta un indicador. Se muestran los ocho de mayor efecto. La fórmula completa y un ejemplo resuelto
-        están en <a href="${enlace(["modelo", "ejemplo"])}">Cómo predice</a>.</p>`)}
+      <p class="nota">Se muestran los ocho datos de mayor efecto. El cálculo completo, con un ejemplo resuelto, está en
+        <a href="${enlace(["modelo", "ejemplo"])}">Cómo funciona</a>.</p>
     </section>
     <section class="bloque" aria-labelledby="t-evolucion">
       <h2 id="t-evolucion">Evolución mes a mes</h2>
@@ -52,7 +61,7 @@ const panelResumen = (o, mod) => `<div class="rejilla-2">
   </div>
   <section class="bloque" aria-labelledby="t-indicadores">
     <h2 id="t-indicadores">Indicadores clave</h2>
-    <p class="panel-bajada">Plazo frente a avance, dinero, historial de los actores y calendario. «Sin dato» significa que la fuente oficial no lo registra para esta obra.</p>
+    <p class="panel-bajada">Datos concretos de plazo, avance, dinero, historial de los actores y temporada.</p>
     ${indicadores(o)}
   </section>`;
 

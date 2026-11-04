@@ -1,5 +1,5 @@
 // @ts-check
-// Contenido de «Cómo predice». Cada función arma una sección con los valores publicados en modelo.json y resumen.json.
+// Contenido de «Cómo funciona». Cada función arma una sección con los valores publicados en modelo.json y resumen.json.
 
 import { barras, calibracion } from "../graficos.js";
 import { esc, fecha, NIVELES, num, pct } from "../formato.js";

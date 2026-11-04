@@ -10,5 +10,12 @@ Regenerar (carpetas de `pptxgenjs`, `docx` y del skill pptx según el equipo):
 ```bash
 PPTX_SKILL=<skill pptx> NODE_PATH=<node_modules> node presentaciones/fuente/construir.js
 python presentaciones/fuente/extraer_notas.py
-NODE_PATH=<node_modules> node presentaciones/fuente/guion.js
+NODE_PATH=<node_modules> node presentaciones/fuente/guion.js presentaciones/fuente/guion_exposicion.json
+```
+
+El mismo generador arma el guion de la presentación «cómo lo construimos» (`diapositivas/`):
+
+```bash
+python presentaciones/fuente/extraer_notas.py diapositivas/Caja_Negra_de_Obra.pptx diapositivas/fuente/notas.json
+NODE_PATH=<node_modules> node presentaciones/fuente/guion.js diapositivas/fuente/guion.json
 ```

@@ -5,8 +5,8 @@ import * as D from "../datos.js";
 import { distribucion } from "../graficos.js";
 import { esc, fecha, millones, NIVEL, NIVELES, num, pct } from "../formato.js";
 import { enlace, reemplazar } from "../router.js";
-import { $, ayuda, chipNivel, conectarSegmentado, estadoVacio, paginador, segmentado } from "../ui/componentes.js";
-import { termino } from "../ui/glosario.js";
+import { $, chipNivel, conectarSegmentado, estadoVacio, paginador, segmentado } from "../ui/componentes.js";
+import { definicion, termino } from "../ui/glosario.js";
 import { icono } from "../ui/iconos.js";
 
 /** @typedef {import("../tipos.js").ObraResumen} ObraResumen */
@@ -14,13 +14,13 @@ import { icono } from "../ui/iconos.js";
 /** @typedef {{ q: string, nivel: string, prov: string, venc: boolean, orden: keyof ObraResumen, dir: "asc" | "desc", pag: number }} Filtros */
 
 const POR_PAGINA = 20;
-/** @type {{ clave: keyof ObraResumen, titulo: string, clase?: string }[]} */
+/** @type {{ clave: keyof ObraResumen, titulo: string, clase?: string, def?: import("../ui/glosario.js").ClaveGlosario }[]} */
 const COLUMNAS = [
   { clave: "nombre", titulo: "Obra" },
-  { clave: "probabilidad", titulo: "Riesgo a 60 días", clase: "der" },
-  { clave: "tendencia", titulo: "Cambio en el mes", clase: "der" },
-  { clave: "consultas_vencidas", titulo: "Consultas vencidas", clase: "der" },
-  { clave: "razon", titulo: "Lo que más empuja el riesgo" },
+  { clave: "probabilidad", titulo: "Riesgo a 60 días", clase: "der", def: "riesgo" },
+  { clave: "tendencia", titulo: "Cambio en el mes", clase: "der", def: "cambio" },
+  { clave: "consultas_vencidas", titulo: "Consultas vencidas", clase: "der", def: "vencida" },
+  { clave: "razon", titulo: "Lo que más empuja el riesgo", def: "empuja" },
 ];
 const ORDENABLES = ["nombre", "probabilidad", "tendencia", "consultas_vencidas"];
 
@@ -123,11 +123,6 @@ export async function render(main, query) {
   <section class="listado" aria-labelledby="t-listado">
     <div class="listado-cabeza">
       <h2 id="t-listado">Obras ordenadas por riesgo</h2>
-      ${ayuda("Cómo leer esta tabla", `<ul>
-        <li><b>Riesgo a 60 días:</b> probabilidad calibrada de que la obra anote un atraso legal (valorización menor al 80 % de lo programado o calendario acelerado).</li>
-        <li><b>Cambio en el mes:</b> diferencia con la probabilidad del mes anterior, en puntos porcentuales.</li>
-        <li><b>Consultas vencidas:</b> consultas del residente que superaron su plazo legal (5 o 21 días) sin respuesta registrada en el cuaderno.</li>
-        <li><b>Lo que más empuja el riesgo:</b> el indicador con mayor contribución positiva en el modelo para esa obra.</li></ul>`)}
     </div>
     <form class="herramientas" role="search" id="filtros" aria-label="Filtrar obras">
       <label class="campo campo-buscar"><span class="solo-lector">Buscar por obra, entidad o distrito</span>${icono("buscar")}
@@ -159,7 +154,7 @@ export async function render(main, query) {
       ? `<div class="tabla-marco" tabindex="0" role="region" aria-label="Tabla de obras"><table class="tabla-obras">
           <caption class="solo-lector">Obras en ejecución; ordenadas por ${esc(COLUMNAS.find((c2) => c2.clave === f.orden)?.titulo ?? "")}</caption>
           <thead><tr>${COLUMNAS.map((col) => `<th scope="col" class="${col.clase ?? ""}" ${ORDENABLES.includes(String(col.clave)) ? `aria-sort="${col.clave === f.orden ? (f.dir === "asc" ? "ascending" : "descending") : "none"}"` : ""}>
-            ${ORDENABLES.includes(String(col.clave)) ? `<button type="button" data-orden="${String(col.clave)}">${col.titulo}${icono("abajo", { clase: "orden-icono" })}</button>` : col.titulo}</th>`).join("")}</tr></thead>
+            ${ORDENABLES.includes(String(col.clave)) ? `<button type="button" data-orden="${String(col.clave)}">${col.titulo}${icono("abajo", { clase: "orden-icono" })}</button>` : col.titulo}${col.def ? definicion(col.titulo, col.def) : ""}</th>`).join("")}</tr></thead>
           <tbody>${pagina.map(fila).join("")}</tbody></table></div>${paginador(f.pag, paginas)}`
       : estadoVacio({ titulo: "Ninguna obra coincide con los filtros", texto: "Prueba con otro nombre o quita alguno de los filtros.", accion: { id: "vacio-limpiar", texto: "Quitar filtros" } });
     guardarFiltros(f);

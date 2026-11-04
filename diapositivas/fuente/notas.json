@@ -1,0 +1,152 @@
+[
+ {
+  "n": 1,
+  "titulo": "Caja Negra de Obra",
+  "notas": "Hoy no venimos a mostrar una página: venimos a explicar cómo pensamos el sistema como equipo de ingeniería, qué decisiones tomamos, por qué, y cómo verificamos que funciona. La demo va al final y es corta."
+ },
+ {
+  "n": 2,
+  "titulo": "El problema en una frase",
+  "notas": "La idea central y la metáfora. No pretendemos resolver todas las causas del atraso; atacamos una pieza concreta y medible: las consultas del residente y los plazos legales para responderlas, más las señales que anuncian un atraso."
+ },
+ {
+  "n": 3,
+  "titulo": "Por qué vale la pena: el problema existe y se puede medir",
+  "notas": "Dos cifras oficiales y dos medidas por nosotros. La Contraloría dice que el problema es grande; nuestras mediciones muestran que una parte se origina en información que ya existe pero nadie procesa."
+ },
+ {
+  "n": 4,
+  "titulo": "Causas y efectos que guían el diseño",
+  "notas": "Cada causa de la izquierda se convirtió en un componente: consultas sin resolver, emparejador; plazos legales, motor de plazos; nadie mide, indicadores y predictor; falta de personal, priorización automática."
+ },
+ {
+  "n": 5,
+  "titulo": "Cómo lo pensamos como equipo",
+  "notas": "Esta sección explica cómo trabajamos antes de escribir código: el proceso, qué debe cumplir el sistema y por qué la arquitectura es la que es."
+ },
+ {
+  "n": 6,
+  "titulo": "Nuestro proceso y las reglas que no se negocian",
+  "notas": "Así trabajamos como grupo. Seis pasos que se repiten por componente, siguiendo la investigación basada en diseño, y cuatro reglas que no se negocian: no inventar datos, no mirar el futuro, decidir con validación y nunca dar una alerta sin su prueba."
+ },
+ {
+  "n": 7,
+  "titulo": "Qué debe cumplir: tres preguntas y cinco atributos de calidad",
+  "notas": "Los requerimientos funcionales son tres preguntas que cualquier supervisor entiende. Los no funcionales se definieron con un número y una forma de medirlo; la columna derecha es lo medido, no lo prometido."
+ },
+ {
+  "n": 8,
+  "titulo": "Decisiones de arquitectura y lo que aceptamos a cambio",
+  "notas": "Esto es lo que más nos importa mostrar como ingenieros: cada decisión tiene una alternativa descartada y un costo que aceptamos conscientemente. Ninguna decisión es gratis."
+ },
+ {
+  "n": 9,
+  "titulo": "Arquitectura: cinco capas desacopladas por archivos",
+  "notas": "La arquitectura es deliberadamente simple. El acoplamiento entre capas es por archivos con formato conocido, lo que permite probar cada capa por separado."
+ },
+ {
+  "n": 10,
+  "titulo": "Cómo construimos los datos y la IA",
+  "notas": "Ahora el detalle de construcción, en el orden en que fluyen los datos."
+ },
+ {
+  "n": 11,
+  "titulo": "Datos: de dónde sale cada cosa y la regla del tiempo",
+  "notas": "La regla más importante de todo el proyecto es el corte temporal. Si un indicador usara información posterior a T, el modelo parecería excelente en el laboratorio y fallaría en la realidad. Esa fuga de información es el error más común en estos proyectos."
+ },
+ {
+  "n": 12,
+  "titulo": "El backend es un pipeline reproducible, no un servidor",
+  "notas": "Cada script es un paso con entrada y salida claras; se ejecuta una vez por corte mensual. La puerta de calidad impide publicar datos inconsistentes, y la huella permite saber exactamente qué modelo generó lo que ve el usuario."
+ },
+ {
+  "n": 13,
+  "titulo": "Componente 1: unir cada respuesta con su consulta",
+  "notas": "Primero reglas, luego IA. Lo valioso es el método de evaluación: miles de ejemplos correctos sin anotar nada a mano. Preferimos dejar una consulta sin enlace antes que inventar un enlace dudoso."
+ },
+ {
+  "n": 14,
+  "titulo": "Componente 2: el motor de plazos aplica la ley, no una opinión",
+  "notas": "Esta parte no usa IA a propósito: los plazos están en el reglamento y deben aplicarse igual siempre. La ruta larga se reconoce por el texto de la respuesta."
+ },
+ {
+  "n": 15,
+  "titulo": "Componente 3: 53 indicadores en 8 grupos por obra y mes",
+  "notas": "Las características que nos preguntaron. Tres grupos salen del cuaderno y cinco de fuentes oficiales: plazo consumido frente a avance, días restantes, ampliaciones previas, monto, ejecución financiera, historial de entidad y contratista, y calendario. Un solo archivo los define, y de él leen el modelo, la web y el informe."
+ },
+ {
+  "n": 16,
+  "titulo": "Componente 4: cómo predice, en cuatro fórmulas",
+  "notas": "Así predice, sin cajas negras. Una suma de árboles da un puntaje; Platt lo convierte en probabilidad; los umbrales de validación dan el nivel; y TreeSHAP reparte el puntaje entre los indicadores para explicar cada alerta."
+ },
+ {
+  "n": 17,
+  "titulo": "Cómo evitamos engañarnos al evaluar",
+  "notas": "La pregunta que nos hicieron la vez pasada: qué métricas y por qué. Cada métrica responde una pregunta concreta y tiene su fórmula. La lista de control es cómo nos protegemos de resultados demasiado buenos para ser ciertos."
+ },
+ {
+  "n": 18,
+  "titulo": "Qué obtuvimos",
+  "notas": "Resultados en tres diapositivas: la vista general, qué aporta cada grupo y un ejemplo resuelto."
+ },
+ {
+  "n": 19,
+  "titulo": "Resultados en una vista (prueba enero–junio de 2026)",
+  "notas": "Tres números para recordar y una advertencia honesta. En el país, con 734 atrasos, la mejora es significativa (p = 0,015 frente al modelo solo cuaderno). En Arequipa la muestra es chica y lo decimos."
+ },
+ {
+  "n": 20,
+  "titulo": "Qué usa el modelo y qué aporta de verdad cada grupo",
+  "notas": "Distinguimos dos preguntas: cuánto usa el modelo cada grupo y cuánto se pierde al quitarlo. Las señales formales del cuaderno, como ampliaciones previas y penalidades, son las que más aportan."
+ },
+ {
+  "n": 21,
+  "titulo": "Ejemplo resuelto: por qué una obra tiene 37,4 % de riesgo",
+  "notas": "Con números reales. Por eso podemos defender cada alerta frente a un supervisor o un auditor: no es una opinión de la máquina, es una suma que se puede revisar indicador por indicador."
+ },
+ {
+  "n": 22,
+  "titulo": "Del modelo a la pantalla",
+  "notas": "La última parte responde cómo llega el modelo al usuario, cómo sabemos que funciona y cómo trabajamos como equipo."
+ },
+ {
+  "n": 23,
+  "titulo": "Del modelo a la pantalla: un contrato de datos versionado",
+  "notas": "La conexión entre el ML y la interfaz no es un servidor sino un contrato: el modelo entrenado se aplica en p05, que valida y publica JSON con una versión de esquema y la huella del modelo. Si la web recibe datos de otro esquema, se niega a mostrarlos."
+ },
+ {
+  "n": 24,
+  "titulo": "Calidad de ingeniería medida, no prometida",
+  "notas": "Las cifras de esta diapositiva salen de resultados/prototipo.json, que se genera automáticamente. Las pruebas no necesitan los datos privados, por eso corren en GitHub Actions en cada cambio."
+ },
+ {
+  "n": 25,
+  "titulo": "Cómo nos organizamos: roles e hitos",
+  "notas": "Nos organizamos por responsabilidades del sistema, no por pantallas. Cada rol es dueño de un tramo del pipeline y de sus pruebas. Avanzamos por hitos verificables; el único pendiente es la prueba con supervisores reales."
+ },
+ {
+  "n": 26,
+  "titulo": "Riesgos que anticipamos y cómo los controlamos",
+  "notas": "Pensar en los riesgos antes es parte del diseño. Los controles de la tercera columna ya existen en el código o en el método; la revisión de tasas por nivel en cada corte es el procedimiento de operación previsto."
+ },
+ {
+  "n": 27,
+  "titulo": "Límites y siguientes pasos",
+  "notas": "Mejor decir los límites nosotros. Ninguno invalida el resultado; delimitan lo que podemos afirmar. Los pasos siguientes atacan directamente esos límites."
+ },
+ {
+  "n": 28,
+  "titulo": "Lo que demostramos",
+  "notas": "Cerramos con una idea: el Estado ya publica la caja negra de cada obra; con buena ingeniería se puede leer a tiempo."
+ },
+ {
+  "n": 29,
+  "titulo": "Anexo A · Patrones en los datos de entrenamiento",
+  "notas": "Para preguntas sobre patrones: antes de modelar miramos cómo cambia la tasa de atraso según cada indicador, solo con datos de entrenamiento."
+ },
+ {
+  "n": 30,
+  "titulo": "Anexo B · Resultados completos de la prueba",
+  "notas": "Tabla completa para responder cualquier pregunta sobre comparadores e intervalos."
+ }
+]

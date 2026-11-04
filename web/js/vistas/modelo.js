@@ -1,5 +1,6 @@
 // @ts-check
-// «Cómo predice»: ficha técnica del modelo con índice lateral. Cada sección tiene su propia URL (#/modelo/<sección>).
+// «Cómo funciona»: primero en palabras simples para todo público; luego el detalle técnico para especialistas.
+// Cada sección tiene su propia URL (#/modelo/<sección>).
 
 import * as D from "../datos.js";
 import { esc, num, pct } from "../formato.js";
@@ -11,11 +12,13 @@ import * as S from "./modelo-secciones.js";
 /** @typedef {import("../tipos.js").Modelo} Modelo */
 
 /** @type {[string, string][]} */
-const SECCIONES = [
-  ["funcionamiento", "Cómo funciona"], ["formulas", "Fórmulas"], ["ejemplo", "Ejemplo resuelto"], ["resultados", "Qué tan bien acierta"],
-  ["niveles", "Niveles y anticipación"], ["pesos", "Qué pesa en el modelo"], ["enlace", "Enlace de consultas"], ["indicadores", "Los indicadores"],
-  ["datos", "Datos y límites"],
+const PARA_TODOS = [["simple", "En palabras simples"]];
+/** @type {[string, string][]} */
+const PARA_ESPECIALISTAS = [
+  ["formulas", "Fórmulas"], ["ejemplo", "Ejemplo resuelto"], ["resultados", "Qué tan bien acierta"], ["niveles", "Niveles y anticipación"],
+  ["pesos", "Qué pesa en el modelo"], ["enlace", "Enlace de consultas"], ["indicadores", "Los indicadores"], ["datos", "Datos y límites"],
 ];
+const SECCIONES = [...PARA_TODOS, ...PARA_ESPECIALISTAS];
 
 /** Observador del índice: se desconecta al volver a dibujar la vista para no acumular observadores. */
 /** @type {IntersectionObserver | null} */
@@ -44,25 +47,45 @@ const seccion = (id, titulo, cuerpo, bajada = "") => `<section class="seccion-mo
 export async function render(main, sub) {
   const [mod, res, obras] = await Promise.all([D.modelo(), D.resumen(), D.obras()]);
   const primera = await D.obra(obras[0].id);
-  document.title = "Cómo predice · Caja Negra de Obra";
+  document.title = "Cómo funciona · Caja Negra de Obra";
   const sel = mod.seleccion.pr_auc_validacion;
   const aqp = mod.resultados.arequipa;
   const grupos = Object.values(mod.grupos);
 
+  const an = mod.anticipacion.arequipa;
+  const p20 = aqp.modelos["M Caja Negra"].precision_top20;
+  /** @param {[string, string][]} lista */
+  const enlacesIndice = (lista) => lista.map(([id, t]) => `<li><a href="#/modelo/${id}" data-seccion="${id}">${t}</a></li>`).join("");
+
   main.innerHTML = `
   <header class="pagina-cabeza">
-    <h1>Cómo calcula el riesgo</h1>
-    <p class="bajada">Cada cierre de mes se toma una foto de cada obra con lo escrito y registrado hasta ese día. Con ${num(mod.catalogo.length)} indicadores,
-      un modelo de árboles estima la probabilidad de que en los ${mod.horizonte_dias} días siguientes aparezca un atraso legal. Aprendió con obras de todo el Perú
-      y se evaluó en meses que nunca vio.</p>
+    <h1>Cómo funciona el sistema</h1>
+    <p class="bajada">La primera parte explica, en palabras simples, cómo se calcula el riesgo y qué tan confiable es. La segunda reúne el detalle técnico
+      (fórmulas, métricas y validación) para que cualquier especialista pueda verificar cada cifra.</p>
   </header>
   <div class="documento">
     <nav class="indice" aria-label="Secciones de esta página">
-      <p class="indice-titulo">En esta página</p>
-      <ul>${SECCIONES.map(([id, t]) => `<li><a href="#/modelo/${id}" data-seccion="${id}">${t}</a></li>`).join("")}</ul>
+      <p class="indice-titulo">Para todos</p>
+      <ul>${enlacesIndice(PARA_TODOS)}</ul>
+      <p class="indice-titulo">Para especialistas</p>
+      <ul>${enlacesIndice(PARA_ESPECIALISTAS)}</ul>
     </nav>
     <div class="documento-cuerpo">
-      ${seccion("funcionamiento", "Cómo funciona", S.pasos(mod))}
+      ${seccion("simple", "En palabras simples", `${S.pasos(mod)}
+        <div class="claves">
+          <div class="clave"><h3>Cómo leer una probabilidad</h3>
+            <p>Un riesgo de 20 % significa que de cada 10 obras en una situación parecida, unas 2 terminan en atraso legal en los próximos 60 días.
+              No dice cuál de ellas: por eso sirve para decidir qué revisar primero.</p></div>
+          <div class="clave"><h3>Qué tan confiable es</h3>
+            <p>Lo probamos con meses que el sistema no conocía. De cada 100 obras que marcó en el 20 % de mayor riesgo en Arequipa, <b>${num(100 * p20, 1)}</b> se atrasaron;
+              eligiéndolas al azar habrían sido <b>${num(100 * aqp.prevalencia, 1)}</b>. Avisó con una mediana de <b>${num(an.dias_anticipacion_mediana, 0)} días</b> de anticipación
+              en el ${pct(an.pct_alertadas / 100)} de las obras que luego se atrasaron.</p></div>
+          <div class="clave"><h3>Qué no hace</h3>
+            <p>No acusa ni sanciona a nadie: indica qué obras conviene revisar primero y muestra la prueba escrita. Solo ve lo que se anota en el cuaderno;
+              una consulta respondida por carta aparece como «sin respuesta en el cuaderno».</p></div>
+        </div>`, "Para cualquier persona: ciudadanos, autoridades, supervisores y estudiantes.")}
+      <div class="separador-especialistas" role="presentation"><h2 class="solo-lector">Para especialistas</h2>
+        <p><b>Para especialistas.</b> Desde aquí, el detalle técnico: fórmulas, métricas, validación y fuentes, para auditores, ingenieros y docentes.</p></div>
       ${seccion("formulas", "Fórmulas", S.formulas(mod), "Todo lo que muestra la ficha de una obra sale de estas fórmulas.")}
       ${seccion("ejemplo", "Ejemplo resuelto", S.ejemplo(mod, primera))}
       ${seccion("resultados", "Qué tan bien acierta", `${segmentado("ambito", "Ámbito de la prueba", [["arequipa", "Arequipa"], ["nacional", "Todo el país"]], "arequipa")}

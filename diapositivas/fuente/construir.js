@@ -211,7 +211,7 @@ const capas = [
   ["Ingesta y linaje", "Descarga, depuración, Parquet, huella SHA-256", "Python · DuckDB"],
   ["Inteligencia", `Emparejador · Motor de plazos · ${NVAR} indicadores · Predictor`, "Sentence-BERT · LightGBM"],
   ["Publicación", "JSON por obra + meta.json con esquema y huella del modelo", "puerta de calidad"],
-  ["Presentación", "Panorama · Ficha de obra · Cómo predice", "JS modular · GitHub Pages"],
+  ["Presentación", "Panorama · Ficha de obra · Cómo funciona", "JS modular · GitHub Pages"],
 ];
 capas.forEach(([t, d, tec], i) => {
   const y = 1.4 + i * 1.07;
@@ -442,7 +442,8 @@ texto(s, [
   { text: "Tres vistas, un propósito cada una", options: { bold: true, fontSize: 17, fontFace: "Cambria", breakLine: true } },
   { text: "Panorama: ", options: { bold: true } }, { text: "qué obras revisar primero.", options: { breakLine: true } },
   { text: "Ficha: ", options: { bold: true } }, { text: "riesgo, evolución, razones, consultas y el asiento como prueba.", options: { breakLine: true } },
-  { text: "Cómo predice: ", options: { bold: true } }, { text: "fórmulas, ejemplo resuelto, métricas y catálogo.", options: { breakLine: true } },
+  { text: "Cómo funciona: ", options: { bold: true } }, { text: "en palabras simples para todos y, para especialistas, fórmulas, métricas y catálogo.", options: { breakLine: true } },
+  { text: "Para todos: ", options: { bold: true } }, { text: "recorrido guiado en cada pantalla, leyenda y globos «?».", options: { breakLine: true } },
   { text: " ", options: { breakLine: true } },
   { text: "Código: ", options: { bold: true } }, { text: "módulos ES sin dependencias (datos, formato, gráficos, vistas), enrutador por hash, CSP estricta y todo texto escapado.", options: { breakLine: true } },
   { text: " ", options: { breakLine: true } },

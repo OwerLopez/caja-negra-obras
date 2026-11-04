@@ -12,7 +12,7 @@ RAIZ = Path(__file__).resolve().parents[1]
 FIG = RAIZ / "informe" / "figuras"
 URL = "http://127.0.0.1:8765/"
 OBRA = json.loads((RAIZ / "web" / "data" / "obras.json").read_text(encoding="utf-8"))[0]["id"]
-SIN_INVITACION = "try { localStorage.setItem('cn-recorrido-visto', '1') } catch (e) {}"
+SIN_INVITACION = "try { ['panorama', 'obra', 'modelo'].forEach((v) => localStorage.setItem('cn-recorrido-visto-' + v, '1')) } catch (e) {}"
 
 
 def foto(loc, nombre):

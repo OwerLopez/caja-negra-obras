@@ -448,7 +448,7 @@ add(...tabla("Requerimientos funcionales y no funcionales", ["Código", "Requeri
   ["RF3", "Mostrar cada consulta con su estado, días, plazo y responsable", "Sección «Consultas del residente: quién está trabando»"],
   ["RF4", "Mostrar la prueba escrita: texto del asiento de la consulta y de la respuesta", "Hojas del cuaderno con número de asiento sellado"],
   ["RF5", "Mostrar los indicadores clave de plazo, avance, dinero e historial, y la historia del cuaderno", "Secciones «Indicadores clave» e «Historia del cuaderno»"],
-  ["RF6", "Explicar las fórmulas, las métricas, los indicadores y un ejemplo resuelto", `Vista «Cómo predice» (${F("c06_formulas.png")})`],
+  ["RF6", "Explicar las fórmulas, las métricas, los indicadores y un ejemplo resuelto", `Vista «Cómo funciona» (${F("c06_formulas.png")})`],
   ["RNF1", "Privacidad: no publicar datos personales", "Anonimización automática del texto"],
   ["RNF2", "Rendimiento: la lista debe aparecer en menos de 2 s", `Mediana medida: ${n(WEB.ms_lista_hasta_mostrar_obras_mediana)} ms`],
   ["RNF3", "Seguridad: sitio estático, sin servidor ni formularios que guarden datos", "Política de seguridad de contenido (CSP) y HTTPS de GitHub Pages"],
@@ -493,13 +493,13 @@ add(h2("4.7 Integración y despliegue"));
 add(p(`El pipeline se ejecuta una vez al mes en el equipo del proyecto (GPU de 8 GB para las representaciones de texto). El resultado son archivos JSON que se publican, junto con la interfaz, en GitHub Pages (${F("d10_despliegue.png")}). No se necesita servidor ni base de datos en línea, y el costo de operación es cero.`));
 add(...figura("d10_despliegue.png", 6, "Diagrama de despliegue."));
 add(h2("4.8 Funcionamiento del prototipo"));
-add(p(`La ${F("d09_flujo_usuario.png")} muestra el flujo de uso. La interfaz es oscura, sobria y de tres pantallas. En **Panorama** el usuario ve las obras ordenadas por riesgo, con el cambio frente al mes anterior y lo que más pesa, y puede buscar, filtrar y ordenar. En la **ficha de obra** ve la probabilidad, su evolución mes a mes, las razones (barras que suben o bajan el riesgo), los indicadores clave, las consultas trabadas con su responsable y, al abrir una consulta, el texto del asiento como prueba. En **Cómo predice** encuentra las fórmulas, un ejemplo resuelto, las métricas con su intervalo, la ablación y el catálogo de indicadores. Para quien no conoce el tema, un recorrido guiado con globos señala cada parte de la pantalla, y los términos técnicos (atraso legal, consulta vencida, PR-AUC) tienen un botón «?» con su definición en palabras simples.`));
+add(p(`La ${F("d09_flujo_usuario.png")} muestra el flujo de uso. La interfaz es oscura, sobria y de tres pantallas. En **Panorama** el usuario ve las obras ordenadas por riesgo, con el cambio frente al mes anterior y lo que más pesa, y puede buscar, filtrar y ordenar. En la **ficha de obra** ve la probabilidad, su evolución mes a mes, las razones (barras que suben o bajan el riesgo), los indicadores clave, las consultas trabadas con su responsable y, al abrir una consulta, el texto del asiento como prueba. En **Cómo funciona** encuentra primero una explicación en palabras simples (cómo leer una probabilidad, qué tan confiable es y qué no hace) y luego, para especialistas, las fórmulas, un ejemplo resuelto, las métricas con su intervalo, la ablación y el catálogo de indicadores. Para quien no conoce el tema, un recorrido guiado con globos señala cada parte de cada pantalla y de cada pestaña, una leyenda reúne el significado de todos los colores y símbolos, y los términos técnicos (atraso legal, consulta vencida, PR-AUC) tienen un botón «?» con su definición en palabras simples.`));
 add(...figura("d09_flujo_usuario.png", 15, "Flujo de uso del sistema."));
 add(...figura("c01_panorama.png", 15.5, "Vista «Panorama»: obras en ejecución de Arequipa ordenadas por riesgo, con contexto oficial de la Contraloría."));
 add(...figura("c02_ficha.png", 15.5, "Ficha de obra: probabilidad, razones (contribuciones TreeSHAP) y evolución mensual del riesgo con los umbrales de nivel."));
 add(...figura("c03_indicadores.png", 15.5, "Ficha de obra: indicadores clave de plazo, avance, dinero, historial y calendario."));
 add(...figura("c04_consultas.png", 13, "Ficha de obra: consultas del residente con su veredicto, responsable y la prueba escrita del asiento."));
-add(...figura("c06_formulas.png", 15.5, "Vista «Cómo predice»: las fórmulas del sistema explicadas en el propio prototipo."));
+add(...figura("c06_formulas.png", 15.5, "Vista «Cómo funciona»: las fórmulas del sistema explicadas en el propio prototipo."));
 
 // 5. Resultados
 add(salto(), h1("5. Resultados"));
