@@ -17,10 +17,24 @@ export const GLOSARIO = {
   lift: "Cuántas veces más atrasos encuentra el sistema que revisando la misma cantidad de obras al azar.",
   roc: "ROC-AUC: probabilidad de que el sistema ponga más arriba a una obra que se atrasó que a una que no. 0,5 equivale al azar.",
   brier: "Error promedio de la probabilidad. Mientras más bajo, más se puede creer el porcentaje.",
+  empuja: "El dato de la obra que más subió su riesgo en el cálculo (la barra roja más larga de su ficha).",
   p: "Valor p del bootstrap pareado: qué tan probable es que la ventaja de Caja Negra sea solo suerte. Menor a 0,05 se considera concluyente.",
 };
 
+/** @typedef {keyof typeof GLOSARIO} ClaveGlosario */
+
 let siguiente = 0;
+
+/**
+ * Solo el botón «?» con su globo, para poner junto a un texto que ya existe (por ejemplo, un encabezado de tabla).
+ * @param {string} texto nombre del término, para el lector de pantalla
+ * @param {ClaveGlosario} clave
+ */
+export function definicion(texto, clave) {
+  const id = `def-${(siguiente += 1)}`;
+  return `<span class="termino"><button type="button" class="termino-boton" aria-expanded="false" aria-controls="${id}"
+    aria-label="Qué significa ${esc(texto)}">?</button><span class="termino-globo" id="${id}" role="note" hidden>${esc(GLOSARIO[clave])}</span></span>`;
+}
 
 /**
  * Término con su globo de definición.

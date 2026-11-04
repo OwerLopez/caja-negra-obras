@@ -6,7 +6,8 @@ import { esc, fecha } from "./formato.js";
 import { leerRuta } from "./router.js";
 import { $, esqueleto, estadoError } from "./ui/componentes.js";
 import { conectarGlosario } from "./ui/glosario.js";
-import { cerrarRecorrido, iniciarRecorrido, yaVisto } from "./ui/recorrido.js";
+import { abrirLeyenda } from "./ui/leyenda.js";
+import { cerrarRecorrido, iniciarRecorrido, INVITACION, marcarVisto, yaVisto } from "./ui/recorrido.js";
 import * as modelo from "./vistas/modelo.js";
 import * as obra from "./vistas/obra.js";
 import * as panorama from "./vistas/panorama.js";
@@ -48,9 +49,9 @@ async function enrutar() {
     const h1 = main.querySelector("h1");
     if (h1) { h1.tabIndex = -1; h1.focus({ preventScroll: true }); }
   }
-  if (ruta.vista === "panorama" && !yaVisto() && !main.querySelector(".invitacion")) {
+  if (!yaVisto(ruta.vista) && !main.querySelector(".invitacion")) {
     main.insertAdjacentHTML("afterbegin", `<div class="invitacion" role="region" aria-label="Recorrido guiado">
-      <p><b>¿Primera vez aquí?</b> Un recorrido de un minuto explica qué muestra cada parte de la pantalla.</p>
+      <p><b>¿Primera vez en esta pantalla?</b> ${INVITACION[ruta.vista]}</p>
       <div class="invitacion-acciones"><button type="button" class="boton boton-primario" data-accion="recorrido">Empezar recorrido</button>
       <button type="button" class="boton-texto" data-accion="descartar">Ahora no</button></div></div>`);
   }
@@ -76,12 +77,10 @@ async function iniciar() {
     const objetivo = /** @type {HTMLElement} */ (ev.target);
     if (objetivo.closest('[data-accion="reintentar"]')) { vistaAnterior = ""; enrutar(); return; }
     const invitacion = objetivo.closest(".invitacion");
-    if (invitacion && objetivo.closest('[data-accion="recorrido"]')) { invitacion.remove(); iniciarRecorrido("panorama", /** @type {HTMLElement} */ ($("#boton-recorrido"))); }
-    else if (invitacion && objetivo.closest('[data-accion="descartar"]')) {
-      invitacion.remove();
-      try { localStorage.setItem("cn-recorrido-visto", "1"); } catch { /* sin almacenamiento */ }
-    }
+    if (invitacion && objetivo.closest('[data-accion="recorrido"]')) { invitacion.remove(); iniciarRecorrido(leerRuta().vista, /** @type {HTMLElement} */ ($("#boton-recorrido"))); }
+    else if (invitacion && objetivo.closest('[data-accion="descartar"]')) { invitacion.remove(); marcarVisto(leerRuta().vista); }
   });
+  $("#boton-leyenda").addEventListener("click", async () => abrirLeyenda(await D.modelo()));
   $("#boton-recorrido").addEventListener("click", (ev) => {
     main.querySelector(".invitacion")?.remove();
     iniciarRecorrido(leerRuta().vista, /** @type {HTMLElement} */ (ev.currentTarget));
