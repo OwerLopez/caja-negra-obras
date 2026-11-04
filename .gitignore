@@ -6,3 +6,5 @@ informe/fuente/node_modules/
 diapositivas/fuente/node_modules/
 ~$*
 *.log
+node_modules/
+build/

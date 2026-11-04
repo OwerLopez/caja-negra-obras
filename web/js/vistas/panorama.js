@@ -1,129 +1,212 @@
-// Panorama: todas las obras de Arequipa en ejecución, ordenadas por riesgo, con filtros y orden por columna.
+// @ts-check
+// Panorama: qué obras revisar primero. Filtros, orden y página viven en la URL (enlace compartible).
 
 import * as D from "../datos.js";
-import { COLOR_NIVEL, esc, fecha, millones, NIVEL, nivelChip, num, pct, puntos } from "../formato.js";
+import { distribucion } from "../graficos.js";
+import { esc, fecha, millones, NIVEL, NIVELES, num, pct } from "../formato.js";
+import { enlace, reemplazar } from "../router.js";
+import { $, ayuda, chipNivel, conectarSegmentado, estadoVacio, paginador, segmentado } from "../ui/componentes.js";
+import { icono } from "../ui/iconos.js";
 
-const estado = { texto: "", nivel: "", provincia: "", orden: "probabilidad", asc: false };
+/** @typedef {import("../tipos.js").ObraResumen} ObraResumen */
+/** @typedef {import("../tipos.js").Nivel} Nivel */
+/** @typedef {{ q: string, nivel: string, prov: string, venc: boolean, orden: keyof ObraResumen, dir: "asc" | "desc", pag: number }} Filtros */
 
+const POR_PAGINA = 20;
+/** @type {{ clave: keyof ObraResumen, titulo: string, clase?: string }[]} */
 const COLUMNAS = [
   { clave: "nombre", titulo: "Obra" },
-  { clave: "probabilidad", titulo: "Riesgo a 60 días", clase: "derecha" },
-  { clave: "tendencia", titulo: "Cambio vs. mes anterior", clase: "derecha col-opcional" },
-  { clave: "consultas_vencidas", titulo: "Consultas sin respuesta", clase: "derecha" },
-  { clave: "razon", titulo: "Lo que más pesa", clase: "col-opcional", sinOrden: true },
+  { clave: "probabilidad", titulo: "Riesgo a 60 días", clase: "der" },
+  { clave: "tendencia", titulo: "Cambio en el mes", clase: "der" },
+  { clave: "consultas_vencidas", titulo: "Consultas vencidas", clase: "der" },
+  { clave: "razon", titulo: "Lo que más empuja el riesgo" },
 ];
+const ORDENABLES = ["nombre", "probabilidad", "tendencia", "consultas_vencidas"];
 
-function filtrar(obras) {
-  const t = estado.texto.trim().toLowerCase();
-  const lista = obras.filter(
-    (o) =>
-      (!estado.nivel || o.nivel === estado.nivel) &&
-      (!estado.provincia || o.provincia === estado.provincia) &&
-      (!t || `${o.nombre} ${o.entidad} ${o.distrito} ${o.provincia}`.toLowerCase().includes(t)),
-  );
-  const k = estado.orden, s = estado.asc ? 1 : -1;
+/** @param {URLSearchParams} q @returns {Filtros} */
+function leerFiltros(q) {
+  const orden = /** @type {keyof ObraResumen} */ (ORDENABLES.includes(q.get("orden") ?? "") ? q.get("orden") : "probabilidad");
+  return {
+    q: q.get("q") ?? "", nivel: NIVELES.includes(/** @type {Nivel} */ (q.get("nivel"))) ? q.get("nivel") ?? "" : "", prov: q.get("prov") ?? "",
+    venc: q.get("venc") === "1", orden, dir: q.get("dir") === "asc" ? "asc" : "desc", pag: Math.max(1, Number(q.get("pag")) || 1),
+  };
+}
+
+/** @param {Filtros} f */
+function guardarFiltros(f) {
+  /** @type {Record<string, string>} */
+  const q = {};
+  if (f.q) q.q = f.q;
+  if (f.nivel) q.nivel = f.nivel;
+  if (f.prov) q.prov = f.prov;
+  if (f.venc) q.venc = "1";
+  if (f.orden !== "probabilidad" || f.dir !== "desc") { q.orden = String(f.orden); q.dir = f.dir; }
+  if (f.pag > 1) q.pag = String(f.pag);
+  reemplazar([], q);
+}
+
+/** @param {ObraResumen[]} obras @param {Filtros} f */
+function aplicar(obras, f) {
+  const t = f.q.trim().toLocaleLowerCase("es");
+  const lista = obras.filter((o) => (!f.nivel || o.nivel === f.nivel) && (!f.prov || o.provincia === f.prov) && (!f.venc || o.consultas_vencidas > 0)
+    && (!t || `${o.nombre} ${o.entidad} ${o.distrito} ${o.provincia}`.toLocaleLowerCase("es").includes(t)));
+  const s = f.dir === "asc" ? 1 : -1;
   return lista.sort((a, b) => {
-    const x = a[k] ?? -Infinity, y = b[k] ?? -Infinity;
-    return (typeof x === "string" ? x.localeCompare(y, "es") : x - y) * s;
+    const x = a[f.orden], y = b[f.orden];
+    if (x === null || x === undefined) return 1;
+    if (y === null || y === undefined) return -1;
+    return (typeof x === "string" ? x.localeCompare(String(y), "es") : Number(x) - Number(y)) * s;
   });
 }
 
-function fila(o) {
-  return `<tr data-id="${esc(o.id)}">
-    <td><div class="obra-nombre"><a href="#/obra/${esc(o.id)}">${esc(o.nombre)}</a></div>
-      <div class="obra-detalle">${esc(o.entidad)} · ${esc(o.distrito)}, ${esc(o.provincia)}</div></td>
-    <td class="derecha"><span class="prob num" style="color:${COLOR_NIVEL[o.nivel]}">${pct(o.probabilidad, 1)}</span>
-      <div class="barrita"><i style="width:${Math.min(100, 100 * o.probabilidad / 0.5)}%;background:${COLOR_NIVEL[o.nivel]}"></i></div>
-      ${nivelChip(o.nivel)}</td>
-    <td class="derecha col-opcional num">${puntos(o.tendencia)}</td>
-    <td class="derecha num">${o.consultas_vencidas ? `<b class="prob" style="color:var(--medio)">${num(o.consultas_vencidas)}</b>` : `<span class="nota">0</span>`}
-      ${o.consultas_tarde ? `<div class="obra-detalle">${num(o.consultas_tarde)} respondidas tarde</div>` : ""}</td>
-    <td class="col-opcional"><span class="nota">${esc(o.razon)}</span></td>
+/** @param {number | null} v */
+function cambio(v) {
+  if (v === null) return '<span class="tenue">Primer mes</span>';
+  const p = 100 * v;
+  if (Math.abs(p) < 0.5) return '<span class="tenue">Sin cambio</span>';
+  return `<span class="${p > 0 ? "sube" : "baja"}">${icono(p > 0 ? "sube" : "baja")}${p > 0 ? "+" : "−"}${num(Math.abs(p))} pts</span>`;
+}
+
+/** @param {ObraResumen} o */
+const fila = (o) => `<tr>
+    <td data-etiqueta="Obra"><a class="obra-enlace" href="${enlace(["obra", o.id])}">${esc(o.nombre)}</a>
+      <span class="obra-lugar">${esc(o.entidad)}, ${esc(o.distrito)} (${esc(o.provincia)})</span></td>
+    <td data-etiqueta="Riesgo a 60 días" class="der"><span class="prob prob-${o.nivel} num">${pct(o.probabilidad, 1)}</span>${chipNivel(o.nivel, true)}</td>
+    <td data-etiqueta="Cambio en el mes" class="der num">${cambio(o.tendencia)}</td>
+    <td data-etiqueta="Consultas vencidas" class="der num">${o.consultas_vencidas ? `<b class="vencidas">${num(o.consultas_vencidas)}</b>` : '<span class="tenue">0</span>'}
+      ${o.consultas_tarde ? `<span class="obra-lugar">${num(o.consultas_tarde)} ${o.consultas_tarde === 1 ? "respondida" : "respondidas"} tarde</span>` : ""}</td>
+    <td data-etiqueta="Lo que más empuja" class="razon">${esc(o.razon) || '<span class="tenue">—</span>'}</td>
   </tr>`;
-}
 
-function pintarTabla(obras) {
-  const lista = filtrar(obras);
-  document.getElementById("cuerpo").innerHTML = lista.length
-    ? lista.map(fila).join("")
-    : `<tr><td colspan="5" class="nota">Ninguna obra coincide con los filtros.</td></tr>`;
-  document.getElementById("contador").textContent = `${num(lista.length)} de ${num(obras.length)} obras`;
-  document.querySelectorAll(".tabla-obras th[data-clave]").forEach((th) => {
-    if (th.dataset.clave === estado.orden) th.setAttribute("aria-sort", estado.asc ? "ascending" : "descending");
-    else th.removeAttribute("aria-sort");
-  });
-}
-
-export async function render(main) {
-  const [obras, res, mod] = await Promise.all([D.obras(), D.resumen(), D.modelo()]);
-  const alto = mod.niveles.arequipa.find((x) => x.nivel === "ALTO");
+/**
+ * @param {HTMLElement} main
+ * @param {URLSearchParams} query
+ */
+export async function render(main, query) {
+  const [obras, res, mod, meta] = await Promise.all([D.obras(), D.resumen(), D.modelo(), D.meta()]);
   document.title = "Panorama · Caja Negra de Obra";
-  const n = res.por_nivel;
-  const conSin = obras.filter((o) => o.consultas_vencidas > 0).length;
-  const sinResp = obras.reduce((s, o) => s + o.consultas_vencidas, 0);
+  const f = leerFiltros(query);
+  const provincias = [...new Set(obras.map((o) => o.provincia))].sort((a, b) => a.localeCompare(b, "es"));
+  const nAqp = Object.fromEntries(mod.niveles.arequipa.map((x) => [x.nivel, x]));
+  const conVencidas = obras.filter((o) => o.consultas_vencidas > 0).length;
+  const vencidas = obras.reduce((s, o) => s + o.consultas_vencidas, 0);
   const c = res.contraloria;
-  const q = res.consultas_arequipa;
-  const provincias = [...new Set(obras.map((o) => o.provincia))].sort();
+  /** @param {Nivel} k */
+  const contar = (k) => obras.filter((o) => o.nivel === k).length;
 
   main.innerHTML = `
-  <section class="portada">
-    <div>
-      <p class="antetitulo">Inspector virtual del cuaderno de obra · corte ${fecha(res.corte)}</p>
-      <h1 class="titular">${num(obras.length)} obras públicas en ejecución en Arequipa. <em>${num(n.ALTO ?? 0)}</em> conviene revisarlas ya.</h1>
-      <p class="bajada">El sistema lee cada asiento del cuaderno de obra digital, enlaza cada consulta del residente con su respuesta,
-        controla los plazos legales para responder y estima la probabilidad de caer en atraso legal en los próximos 60 días.
-        Cada alerta muestra el asiento que la respalda.</p>
+  <header class="pagina-cabeza">
+    <h1>Obras públicas en ejecución en Arequipa</h1>
+    <p class="bajada">Qué obras conviene revisar primero, según lo escrito en su cuaderno de obra hasta el ${fecha(meta.corte)}.
+      El riesgo es la probabilidad de caer en atraso legal en los próximos ${mod.horizonte_dias} días.</p>
+  </header>
+
+  <section class="resumen" aria-labelledby="t-resumen">
+    <h2 id="t-resumen" class="solo-lector">Resumen del corte</h2>
+    <div class="resumen-principal">
+      <p class="resumen-cifra"><b class="num">${num(obras.length)}</b> obras en ejecución, por nivel de riesgo</p>
+      ${distribucion(res.por_nivel, obras.length)}
+      <dl class="niveles-leyenda">
+        ${NIVELES.map((k) => `<div><dt>${chipNivel(k)}</dt><dd>${k === "ALTO" ? `probabilidad desde ${pct(mod.niveles.umbral_alto, 1)}` : k === "MEDIO" ? `desde ${pct(mod.niveles.umbral_medio, 1)}` : `menos de ${pct(mod.niveles.umbral_medio, 1)}`}.
+          En la prueba se atrasó el ${pct(nAqp[k].tasa_observada, 1)} de las obras de este nivel.</dd></div>`).join("")}
+      </dl>
     </div>
-    <aside class="contexto" aria-label="Contexto oficial">
-      <p><b>${num(c.obras_paralizadas_arequipa)} obras paralizadas</b>en Arequipa al 31-03-2026, con ${millones(c.costo_actualizado_arequipa)} de costo actualizado (tercer departamento del país).</p>
-      <p><b>${num(q.veredicto["Sin respuesta en el cuaderno"])} de ${num(q.consultas_residente)}</b>consultas del residente en Arequipa no tienen respuesta registrada en el cuaderno; la mediana de respuesta es ${num(q.dias_respuesta.mediana)} días.</p>
-      <p class="nota">Fuentes: ${esc(c.fuente)}; ${esc(res.fuente)}.</p>
-    </aside>
+    <div class="resumen-lateral">
+      <div class="dato"><span class="dato-icono">${icono("reloj")}</span><p><b class="num">${num(conVencidas)}</b> obras tienen consultas con plazo vencido y sin respuesta en el cuaderno
+        <span class="tenue">(${num(vencidas)} consultas en total)</span></p></div>
+      <div class="dato"><span class="dato-icono">${icono("alerta")}</span><p><b class="num">${num(c.obras_paralizadas_arequipa)}</b> obras ya estaban paralizadas en Arequipa al 31-03-2026,
+        con ${millones(c.costo_actualizado_arequipa)} de costo actualizado <span class="tenue">(Contraloría)</span></p></div>
+    </div>
   </section>
 
-  <ul class="cifras">
-    <li class="c-alto"><b class="num">${num(n.ALTO ?? 0)}</b>obras en riesgo alto</li>
-    <li class="c-medio"><b class="num">${num(n.MEDIO ?? 0)}</b>en riesgo medio</li>
-    <li><b class="num">${num(conSin)}</b>obras con consultas vencidas sin respuesta</li>
-    <li><b class="num">${num(sinResp)}</b>consultas en esa situación</li>
-  </ul>
-  <div class="distribucion" role="img" aria-label="Distribución por nivel: ${["ALTO", "MEDIO", "BAJO"].map((k) => `${NIVEL[k]} ${n[k] ?? 0}`).join(", ")}">
-    ${["ALTO", "MEDIO", "BAJO"].map((k) => `<span style="width:${(100 * (n[k] ?? 0)) / obras.length}%;background:${COLOR_NIVEL[k]}"></span>`).join("")}
-  </div>
-  <p class="nota">Riesgo alto: el 20 % de obras-mes con mayor puntaje en validación. En la prueba de Arequipa, el ${pct(alto.tasa_observada, 1)} de las obras-mes en ese nivel cayó en atraso legal en 60 días, frente a una tasa base del ${pct(mod.resultados.arequipa.prevalencia, 1)}.</p>
+  <section class="listado" aria-labelledby="t-listado">
+    <div class="listado-cabeza">
+      <h2 id="t-listado">Obras ordenadas por riesgo</h2>
+      ${ayuda("Cómo leer esta tabla", `<ul>
+        <li><b>Riesgo a 60 días:</b> probabilidad calibrada de que la obra anote un atraso legal (valorización menor al 80 % de lo programado o calendario acelerado).</li>
+        <li><b>Cambio en el mes:</b> diferencia con la probabilidad del mes anterior, en puntos porcentuales.</li>
+        <li><b>Consultas vencidas:</b> consultas del residente que superaron su plazo legal (5 o 21 días) sin respuesta registrada en el cuaderno.</li>
+        <li><b>Lo que más empuja el riesgo:</b> el indicador con mayor contribución positiva en el modelo para esa obra.</li></ul>`)}
+    </div>
+    <form class="herramientas" role="search" id="filtros" aria-label="Filtrar obras">
+      <label class="campo campo-buscar"><span class="solo-lector">Buscar por obra, entidad o distrito</span>${icono("buscar")}
+        <input id="f-q" type="search" value="${esc(f.q)}" placeholder="Buscar obra, entidad o distrito" autocomplete="off"></label>
+      ${segmentado("f-nivel", "Nivel de riesgo", [["", `Todos <span class="cuenta">${num(obras.length)}</span>`], ...NIVELES.map((k) => /** @type {[string, string]} */ ([k, `${NIVEL[k].corto} <span class="cuenta">${num(contar(k))}</span>`]))], f.nivel)}
+      <label class="campo"><span class="solo-lector">Provincia</span>
+        <select id="f-prov"><option value="">Todas las provincias</option>${provincias.map((p) => `<option ${f.prov === p ? "selected" : ""}>${esc(p)}</option>`).join("")}</select></label>
+      <label class="interruptor"><input id="f-venc" type="checkbox" ${f.venc ? "checked" : ""}><span>Solo con consultas vencidas</span></label>
+      <label class="campo campo-orden"><span class="solo-lector">Ordenar por</span>
+        <select id="f-orden">${[["probabilidad-desc", "Mayor riesgo primero"], ["tendencia-desc", "Mayor aumento en el mes"], ["consultas_vencidas-desc", "Más consultas vencidas"], ["nombre-asc", "Nombre (A–Z)"]]
+          .map(([v, t]) => `<option value="${v}" ${`${String(f.orden)}-${f.dir}` === v ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+    </form>
+    <div class="listado-estado"><p id="contador" aria-live="polite"></p><button type="button" class="boton-texto" id="limpiar" hidden>${icono("cerrar")}Quitar filtros</button></div>
+    <div id="resultado"></div>
+  </section>`;
 
-  <form class="filtros" role="search" id="filtros">
-    <label>Buscar obra, entidad o distrito<input id="f-texto" type="search" value="${esc(estado.texto)}" placeholder="Ej.: Cayma, carretera, colegio" autocomplete="off"></label>
-    <label>Nivel<select id="f-nivel"><option value="">Todos</option>${["ALTO", "MEDIO", "BAJO"].map((k) => `<option value="${k}" ${estado.nivel === k ? "selected" : ""}>${NIVEL[k]}</option>`).join("")}</select></label>
-    <label>Provincia<select id="f-prov"><option value="">Todas</option>${provincias.map((p) => `<option ${estado.provincia === p ? "selected" : ""}>${esc(p)}</option>`).join("")}</select></label>
-    <span class="contador" id="contador" aria-live="polite"></span>
-  </form>
-  <div class="envoltura">
-    <table class="tabla-obras">
-      <caption class="solo-lector">Obras en ejecución ordenadas por riesgo de atraso legal</caption>
-      <thead><tr>${COLUMNAS.map((c) => `<th scope="col" class="${c.clase ?? ""}" ${c.sinOrden ? "" : `data-clave="${c.clave}"`}>${c.sinOrden ? c.titulo : `<button type="button">${c.titulo}</button>`}</th>`).join("")}</tr></thead>
-      <tbody id="cuerpo"></tbody>
-    </table>
-  </div>`;
+  const pintar = () => {
+    const lista = aplicar(obras, f);
+    const paginas = Math.max(1, Math.ceil(lista.length / POR_PAGINA));
+    f.pag = Math.min(f.pag, paginas);
+    const desde = (f.pag - 1) * POR_PAGINA;
+    const pagina = lista.slice(desde, desde + POR_PAGINA);
+    const filtrado = Boolean(f.q || f.nivel || f.prov || f.venc);
+    $("#contador").textContent = lista.length
+      ? `Mostrando ${num(desde + 1)}–${num(desde + pagina.length)} de ${num(lista.length)} obras${filtrado ? ` (de ${num(obras.length)} en total)` : ""}`
+      : "";
+    /** @type {HTMLElement} */ ($("#limpiar")).hidden = !filtrado;
+    $("#resultado").innerHTML = lista.length
+      ? `<div class="tabla-marco" tabindex="0" role="region" aria-label="Tabla de obras"><table class="tabla-obras">
+          <caption class="solo-lector">Obras en ejecución; ordenadas por ${esc(COLUMNAS.find((c2) => c2.clave === f.orden)?.titulo ?? "")}</caption>
+          <thead><tr>${COLUMNAS.map((col) => `<th scope="col" class="${col.clase ?? ""}" ${ORDENABLES.includes(String(col.clave)) ? `aria-sort="${col.clave === f.orden ? (f.dir === "asc" ? "ascending" : "descending") : "none"}"` : ""}>
+            ${ORDENABLES.includes(String(col.clave)) ? `<button type="button" data-orden="${String(col.clave)}">${col.titulo}${icono("abajo", { clase: "orden-icono" })}</button>` : col.titulo}</th>`).join("")}</tr></thead>
+          <tbody>${pagina.map(fila).join("")}</tbody></table></div>${paginador(f.pag, paginas)}`
+      : estadoVacio({ titulo: "Ninguna obra coincide con los filtros", texto: "Prueba con otro nombre o quita alguno de los filtros.", accion: { id: "vacio-limpiar", texto: "Quitar filtros" } });
+    guardarFiltros(f);
+  };
 
-  pintarTabla(obras);
-  const f = document.getElementById("filtros");
-  f.addEventListener("submit", (e) => e.preventDefault());
-  f.addEventListener("input", () => {
-    estado.texto = document.getElementById("f-texto").value;
-    estado.nivel = document.getElementById("f-nivel").value;
-    estado.provincia = document.getElementById("f-prov").value;
-    pintarTabla(obras);
+  /** @param {Partial<Filtros>} cambios */
+  const actualizar = (cambios) => { Object.assign(f, { pag: 1 }, cambios); pintar(); };
+  let espera = 0;
+  $("#f-q").addEventListener("input", (e) => {
+    clearTimeout(espera);
+    espera = window.setTimeout(() => actualizar({ q: /** @type {HTMLInputElement} */ (e.target).value }), 150);
   });
-  main.querySelector("thead").addEventListener("click", (e) => {
-    const th = e.target.closest("th[data-clave]");
-    if (!th) return;
-    estado.asc = estado.orden === th.dataset.clave ? !estado.asc : th.dataset.clave === "nombre";
-    estado.orden = th.dataset.clave;
-    pintarTabla(obras);
+  $("#filtros").addEventListener("submit", (e) => e.preventDefault());
+  conectarSegmentado($("#f-nivel"), (v) => actualizar({ nivel: v }));
+  $("#f-prov").addEventListener("change", (e) => actualizar({ prov: /** @type {HTMLSelectElement} */ (e.target).value }));
+  $("#f-venc").addEventListener("change", (e) => actualizar({ venc: /** @type {HTMLInputElement} */ (e.target).checked }));
+  $("#f-orden").addEventListener("change", (e) => {
+    const [orden, dir] = /** @type {HTMLSelectElement} */ (e.target).value.split("-");
+    actualizar({ orden: /** @type {keyof ObraResumen} */ (orden), dir: dir === "asc" ? "asc" : "desc" });
   });
-  document.getElementById("cuerpo").addEventListener("click", (e) => {
-    const tr = e.target.closest("tr[data-id]");
-    if (tr && !e.target.closest("a")) location.hash = `#/obra/${tr.dataset.id}`;
+  const limpiar = () => {
+    Object.assign(f, { q: "", nivel: "", prov: "", venc: false, pag: 1 });
+    /** @type {HTMLInputElement} */ ($("#f-q")).value = "";
+    /** @type {HTMLSelectElement} */ ($("#f-prov")).value = "";
+    /** @type {HTMLInputElement} */ ($("#f-venc")).checked = false;
+    $("#f-nivel").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.valor === "")));
+    pintar();
+    /** @type {HTMLInputElement} */ ($("#f-q")).focus();
+  };
+  $("#limpiar").addEventListener("click", limpiar);
+  $("#resultado").addEventListener("click", (e) => {
+    const objetivo = /** @type {HTMLElement} */ (e.target);
+    const orden = objetivo.closest("button[data-orden]");
+    if (orden instanceof HTMLButtonElement) {
+      const clave = /** @type {keyof ObraResumen} */ (orden.dataset.orden);
+      actualizar({ orden: clave, dir: f.orden === clave ? (f.dir === "asc" ? "desc" : "asc") : clave === "nombre" ? "asc" : "desc" });
+      /** @type {HTMLSelectElement} */ ($("#f-orden")).value = `${String(f.orden)}-${f.dir}`;
+      $(`button[data-orden="${String(clave)}"]`).focus();
+      return;
+    }
+    const pag = objetivo.closest("button[data-pagina]");
+    if (pag instanceof HTMLButtonElement && !pag.disabled) {
+      f.pag = Number(pag.dataset.pagina);
+      pintar();
+      $("#t-listado").scrollIntoView({ block: "start" });
+      return;
+    }
+    if (objetivo.closest("#vacio-limpiar")) limpiar();
   });
+  pintar();
 }

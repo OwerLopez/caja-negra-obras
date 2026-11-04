@@ -45,27 +45,61 @@ def test_recorrido_completo(url, navegador, ancho):
 
     pag.goto(url)
     pag.wait_for_selector(".tabla-obras tbody tr")
-    assert pag.locator(".tabla-obras tbody tr").count() == len(json.loads((WEB / "data" / "obras.json").read_text(encoding="utf-8")))
-    assert "modelo" in pag.inner_text("#version")
-    pag.fill("#f-texto", "zzzz-no-existe")
-    assert "Ninguna obra" in pag.inner_text("#cuerpo")
-    pag.fill("#f-texto", "")
-    pag.locator("th[data-clave=probabilidad] button").click()
-    assert pag.get_attribute("th[data-clave=probabilidad]", "aria-sort") == "ascending"
+    total = len(json.loads((WEB / "data" / "obras.json").read_text(encoding="utf-8")))
+    assert "Modelo" in pag.inner_text("#version")
+    assert f"de {total} obras" in pag.inner_text("#contador")
+    assert pag.locator(".tabla-obras tbody tr").count() == min(20, total)
 
+    # filtros en la URL: sobreviven a recargar la página
+    pag.locator("#f-nivel button[data-valor=ALTO]").click()
+    assert "nivel=ALTO" in pag.url
+    pag.reload()
+    pag.wait_for_selector(".tabla-obras tbody tr")
+    assert pag.get_attribute("#f-nivel button[data-valor=ALTO]", "aria-pressed") == "true"
+    assert all("Alto" in t for t in pag.locator(".tabla-obras tbody .nivel").all_inner_texts())
+
+    # estado vacío y recuperación
+    pag.fill("#f-q", "zzzz-no-existe")
+    pag.wait_for_selector(".estado")
+    assert "Ninguna obra coincide" in pag.inner_text("#resultado")
+    pag.click("#vacio-limpiar")
+    pag.wait_for_selector(".tabla-obras tbody tr")
+
+    # orden por columna y paginación
+    if ancho >= 720:
+        pag.locator("button[data-orden=probabilidad]").click()
+        assert pag.get_attribute("th:has(button[data-orden=probabilidad])", "aria-sort") == "ascending"
+    else:  # en móvil la tabla es una lista de tarjetas y se ordena con el selector
+        pag.select_option("#f-orden", "nombre-asc")
+        assert "orden=nombre" in pag.url
+    if total > 20:
+        pag.locator(".paginador button[data-pagina='2']").first.click()
+        assert "pag=2" in pag.url
+
+    # ficha: pestañas con teclado, consultas con su asiento, historia
     pag.goto(url + "#/obra/" + PRIMERA)
-    pag.wait_for_selector("#hitos", state="attached")
+    pag.wait_for_selector(".aportes")
     assert pag.locator(".aporte").count() > 0
-    pag.locator(".consulta > button").first.click()
-    assert pag.locator(".consulta.abierta .asiento").count() >= 1
+    pag.locator("#tab-resumen").focus()
+    pag.keyboard.press("ArrowRight")
+    assert pag.get_attribute("#tab-consultas", "aria-selected") == "true"
+    assert pag.url.endswith("/consultas")
+    pag.locator(".consulta-cabeza").first.click()
+    assert pag.locator(".consulta-prueba:not([hidden]) .asiento").count() >= 1
+    pag.locator("#tab-historia").click()
+    assert pag.locator("#panel-historia").is_visible()
 
+    # ficha técnica: cambio de ámbito y catálogo filtrable
     pag.goto(url + "#/modelo")
-    pag.wait_for_selector("#ejemplo table")
-    pag.locator("#ambito button[data-v=nacional]").click()
-    assert "Prueba nacional" in pag.inner_text("#metricas")
+    pag.wait_for_selector("#catalogo tr")
+    pag.locator("#ambito button[data-valor=nacional]").click()
+    assert "Todo el país" in pag.inner_text("#tabla-resultados")
+    pag.fill("#cat-q", "devengado")
+    assert 0 < pag.locator("#catalogo tr").count() < 53
 
+    # ruta inválida: error claro y sin desbordes
     pag.goto(url + "#/obra/no-es-un-id")
-    pag.wait_for_selector(".error")
+    pag.wait_for_selector(".estado-error")
     assert pag.evaluate("document.documentElement.scrollWidth") <= ancho
     assert errores == []
     pag.close()

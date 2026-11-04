@@ -6,36 +6,37 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="dark">
-  <meta name="theme-color" content="#0e141b">
+  <meta name="theme-color" content="#0f151c">
   <title>Caja Negra de Obra</title>
-  <meta name="description" content="Inspector virtual que lee el cuaderno de obra digital de las obras públicas de Arequipa, detecta quién las está trabando y avisa antes del atraso, con la prueba escrita.">
+  <meta name="description" content="Qué obras públicas de Arequipa conviene revisar primero, según su cuaderno de obra digital: riesgo de atraso a 60 días, consultas vencidas y la prueba escrita.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,400..800&family=Literata:opsz,wght@7..72,400;7..72,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app.css">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b2531'/%3E%3Crect x='8' y='9' width='16' height='3' rx='1.5' fill='%237aa2ff'/%3E%3Crect x='8' y='15' width='16' height='3' rx='1.5' fill='%23e6edf3' opacity='.7'/%3E%3Crect x='8' y='21' width='10' height='3' rx='1.5' fill='%23ff6b5b'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b2531'/%3E%3Crect x='8' y='9' width='16' height='3' rx='1.5' fill='%2386a8ff'/%3E%3Crect x='8' y='15' width='16' height='3' rx='1.5' fill='%23e8edf2' opacity='.7'/%3E%3Crect x='8' y='21' width='10' height='3' rx='1.5' fill='%23ff7a6b'/%3E%3C/svg%3E">
   <script type="module" src="js/main.js"></script>
 </head>
 <body>
   <a class="saltar" href="#contenido">Ir al contenido</a>
   <header class="barra">
-    <a class="marca" href="#/">
-      <span class="marca-icono" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="marca-texto"><strong>Caja Negra de Obra</strong><span>Obras públicas de Arequipa</span></span>
-    </a>
-    <nav aria-label="Secciones">
-      <a href="#/" data-ruta="panorama">Panorama</a>
-      <a href="#/modelo" data-ruta="modelo">Cómo predice</a>
-    </nav>
+    <div class="barra-interior">
+      <a class="marca" href="#/" aria-label="Caja Negra de Obra, ir al panorama">
+        <span class="marca-icono" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="marca-texto"><strong>Caja Negra de Obra</strong><span>Obras públicas de Arequipa</span></span>
+      </a>
+      <nav class="nav" aria-label="Secciones">
+        <a href="#/" data-vista="panorama">Panorama</a>
+        <a href="#/modelo" data-vista="modelo">Cómo predice</a>
+      </nav>
+      <p class="corte" id="corte"></p>
+    </div>
   </header>
-  <main id="contenido" tabindex="-1">
-    <p class="cargando">Leyendo el cuaderno de obra…</p>
-  </main>
+  <main id="contenido" tabindex="-1"></main>
   <footer class="pie">
-    <p>Datos abiertos del OECE (cuaderno de obra digital), MEF (SIAF y Banco de Inversiones), INFOBRAS y Contraloría. Prototipo académico de apoyo a la supervisión
-      (UNSA · Gestión de Sistemas y Tecnologías de Información): no acusa ni sanciona; toda alerta debe verificarse con el expediente de la obra.
+    <p>Datos abiertos del OECE (cuaderno de obra digital), MEF (SIAF y Banco de Inversiones), INFOBRAS, SEACE y Contraloría. Prototipo académico de apoyo
+      a la supervisión (UNSA, Gestión de Sistemas y Tecnologías de Información): no acusa ni sanciona, y toda alerta debe verificarse con el expediente de la obra.
       Los nombres de personas en los asientos están anonimizados.</p>
-    <p class="version num" id="version" aria-label="Versión de los datos y del modelo"></p>
+    <p class="version" id="version"></p>
   </footer>
 </body>
 </html>
